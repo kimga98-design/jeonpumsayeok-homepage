@@ -475,7 +475,12 @@
       display: flex;
       gap: 8px;
       margin-bottom: 32px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 4px;
     }
+    .board-tabs::-webkit-scrollbar { display: none; }
     .tab {
       padding: 8px 18px;
       border-radius: 20px;
@@ -486,6 +491,8 @@
       color: var(--text-mid);
       background: white;
       transition: all .15s;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .tab.active {
       background: var(--green-deep);
@@ -815,6 +822,19 @@
       color: var(--text-mid);
       opacity: .6;
     }
+    /* ── 스크롤 페이드인 애니메이션 ─────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
   </style>
 </head>
 <body>
@@ -1226,22 +1246,18 @@
         </div>
       </div>
 
-      <div style="background:rgba(255,255,255,.06); border:1px solid rgba(196,168,98,.3); border-radius:10px; padding:14px 18px; margin-bottom:16px; font-size:12px; color:rgba(240,237,230,.7); line-height:1.7;">
-        📋 <strong style="color:var(--gold-light);">개인정보 수집 안내</strong><br>
-        본 양식은 Google Forms를 통해 제출되며 Google 개인정보처리방침이 적용됩니다. 수집 항목(성도 기본 정보, 상담 관련 내용)은 상담 연계 목적으로만 사용되며 정품사역팀 내부에서만 열람됩니다. 정신건강 관련 내용은 민감정보로 처리됩니다.
-      </div>
-      <div class="apply-form-area" id="applyFormArea" style="padding:0; overflow:hidden; background:transparent; border:none;">
-        <iframe
-          src="https://docs.google.com/forms/d/e/1FAIpQLScSY7q-d39j4GqPrMk3rImwtok3Hqhub-YOYS_cJq9U8BcuDw/viewform?embedded=true"
-          width="100%"
-          height="720"
-          frameborder="0"
-          marginheight="0"
-          marginwidth="0"
-          style="border-radius:12px; display:block; background:white;">
-          로딩 중...
-        </iframe>
-        <p style="padding:12px 20px; font-size:11px; color:rgba(240,237,230,.35); text-align:center;">작성하신 정보는 정품사역팀 외 공개되지 않습니다.</p>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:20px; padding:40px 24px; background:rgba(255,255,255,.04); border:1px solid rgba(196,168,98,.25); border-radius:16px; text-align:center;">
+        <div style="font-size:48px;">📝</div>
+        <div>
+          <p style="color:var(--cream); font-size:17px; font-weight:700; margin:0 0 8px;">상담 신청서 작성하기</p>
+          <p style="color:rgba(240,237,230,.65); font-size:13px; line-height:1.7; margin:0;">아래 버튼을 눌러 신청서를 작성해 주세요.<br>작성하신 정보는 정품사역팀 내부에서만 열람됩니다.</p>
+        </div>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLScSY7q-d39j4GqPrMk3rImwtok3Hqhub-YOYS_cJq9U8BcuDw/viewform" target="_blank" rel="noopener"
+           style="display:inline-block; background:var(--gold); color:var(--green-deep); font-size:15px; font-weight:800; padding:14px 36px; border-radius:30px; text-decoration:none; letter-spacing:.3px; transition:opacity .15s;"
+           onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+          신청서 열기 →
+        </a>
+        <p style="color:rgba(240,237,230,.35); font-size:11px; margin:0; line-height:1.6;">본 양식은 Google Forms를 통해 제출됩니다.<br>수집 항목: 성도 기본 정보·상담 관련 내용 | 목적: 상담 연계 | 보유: 종결 후 3년</p>
       </div>
     </div>
   </div>
@@ -1902,6 +1918,31 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
     <span style="display:block; margin-top:6px; font-size:10px; color:rgba(240,237,230,.35);">개인정보 수집·이용 목적: 상담 연계 | 보유기간: 상담 종결 후 3년 | 문의: 정품사역팀</span>
   </div>
 </footer>
+
+<script>
+(function() {
+  const targets = document.querySelectorAll(
+    '.section-tag, .section-title, .section-desc, ' +
+    '.about-card, .guide-card, .apply-steps li, ' +
+    '.tier-item, .board-item, .org-card, .community-card, ' +
+    '.emergency-hotline, .help-step'
+  );
+  targets.forEach((el, i) => {
+    el.classList.add('reveal');
+  });
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  targets.forEach(el => obs.observe(el));
+})();
+</script>
 
 </body>
 </html>
