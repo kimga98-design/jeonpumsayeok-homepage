@@ -47,11 +47,13 @@
       border-bottom: 1px solid rgba(196, 168, 98, 0.3);
     }
     .nav-logo {
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--cream);
       letter-spacing: -0.02em;
+      line-height: 1.3;
     }
+    .nav-logo .logo-sub { font-size: 10px; font-weight: 400; color: rgba(240,237,230,.5); display: block; letter-spacing: .04em; }
     .nav-logo span { color: var(--gold); }
     .nav-links {
       display: flex;
@@ -79,7 +81,7 @@
     /* ── 히어로 ──────────────────────────────────── */
     #hero {
       min-height: 100vh;
-      background: var(--green-deep);
+      background: url('hero-bg.png') center center / cover no-repeat;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -93,9 +95,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(ellipse 60% 50% at 70% 60%, rgba(196,168,98,.08) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 60% at 20% 30%, rgba(90,127,69,.15) 0%, transparent 60%);
+      background: rgba(20, 40, 15, 0.62);
     }
     .hero-tag {
       font-size: 11px;
@@ -679,10 +679,37 @@
       border-top: 1px solid var(--cream-dark);
     }
 
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--cream);
+      font-size: 22px;
+      cursor: pointer;
+      padding: 4px 8px;
+      line-height: 1;
+    }
+
     /* ── 반응형 ──────────────────────────────────── */
     @media (max-width: 768px) {
       nav { padding: 0 20px; }
-      .nav-links { display: none; }
+      .hamburger { display: block; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--green-deep);
+        flex-direction: column;
+        padding: 12px 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,.3);
+        z-index: 999;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links li { padding: 0; }
+      .nav-links a { display: block; padding: 12px 28px; font-size: 15px; }
+      .nav-links .nav-cta { margin: 8px 28px; text-align: center; }
       .about-grid  { grid-template-columns: 1fr; }
       .guide-grid  { grid-template-columns: 1fr 1fr; }
       .tier-flow   { flex-direction: column; }
@@ -693,22 +720,132 @@
       .check-list  { grid-template-columns: 1fr; }
       .footer-inner { grid-template-columns: 1fr; gap: 24px; }
       .footer-bottom { flex-direction: column; gap: 8px; }
+      .team-org { flex-direction: column; gap: 12px; }
+      .team-grid { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 480px) {
       .guide-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── 체크리스트 ──────────────────────────────────── */
+    .cl-section { margin-bottom: 20px; }
+    .cl-title {
+      font-size: 14px; font-weight: 700;
+      color: var(--green-deep); margin-bottom: 10px;
+    }
+    .cl-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 13.5px; color: var(--text-dark);
+      line-height: 1.6; padding: 7px 0;
+      border-bottom: 1px solid var(--cream-dark);
+      cursor: pointer;
+    }
+    .cl-item:last-child { border-bottom: none; }
+    .cl-check { margin-top: 3px; width: 16px; height: 16px; flex-shrink: 0; accent-color: var(--green-mid); }
+
+    /* ── 섬기는 사람들 ────────────────────────────────── */
+    #team { background: var(--cream-dark); }
+    .team-org {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+    }
+    .org-card {
+      background: var(--green-deep);
+      color: var(--text-light);
+      border-radius: 12px;
+      padding: 16px 28px;
+      text-align: center;
+      min-width: 140px;
+    }
+    .org-card .org-role {
+      font-size: 11px;
+      color: var(--gold-light);
+      font-weight: 600;
+      letter-spacing: .06em;
+      margin-bottom: 4px;
+    }
+    .org-card .org-name { font-size: 16px; font-weight: 700; }
+    .org-arrow {
+      width: 32px;
+      text-align: center;
+      color: var(--green-mid);
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    .community-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px 18px;
+      border: 1px solid var(--cream-dark);
+      box-shadow: 0 2px 8px rgba(44,74,30,.06);
+    }
+    .community-card h4 {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--green-mid);
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--cream-dark);
+      letter-spacing: .03em;
+    }
+    .community-card ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 10px;
+    }
+    .community-card ul li {
+      font-size: 13px;
+      color: var(--text-mid);
+    }
+    .team-privacy {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--text-mid);
+      opacity: .6;
     }
   </style>
 </head>
 <body>
 
+<!-- ── 상단 바 ───────────────────────────────────────── -->
+<div style="background:var(--green-deep); border-bottom:1px solid rgba(196,168,98,.2); padding:6px 32px; display:flex; justify-content:flex-end; gap:12px;">
+  <a href="https://www.onnuri.org/" target="_blank" rel="noopener" style="font-size:11.5px; color:rgba(240,237,230,.6); text-decoration:none; display:flex; align-items:center; gap:4px; transition:color .2s;"
+     onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(240,237,230,.6)'">
+    온누리교회 ↗
+  </a>
+  <span style="color:rgba(240,237,230,.2); font-size:11px;">|</span>
+  <a href="https://www.onnuri.org/healing" target="_blank" rel="noopener" style="font-size:11.5px; color:rgba(240,237,230,.6); text-decoration:none; display:flex; align-items:center; gap:4px; transition:color .2s;"
+     onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(240,237,230,.6)'">
+    회복사역본부 ↗
+  </a>
+</div>
+
 <!-- ── 네비게이션 ─────────────────────────────────── -->
 <nav>
-  <div class="nav-logo">정품<span>사역</span></div>
-  <ul class="nav-links">
-    <li><a href="#about">사역소개</a></li>
-    <li><a href="#guide">돌봄가이드</a></li>
-    <li><a href="#board">게시판</a></li>
-    <li><a href="#apply" class="nav-cta">상담신청</a></li>
+  <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="cursor:pointer;">
+    <span class="logo-sub">온누리교회</span>
+    정품<span>사역</span>
+  </div>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="메뉴 열기">&#9776;</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about" onclick="closeMenu()">사역소개</a></li>
+    <li><a href="#guide" onclick="closeMenu()">돌봄가이드</a></li>
+    <li><a href="#board" onclick="closeMenu()">게시판</a></li>
+    <li><a href="#emergency" onclick="closeMenu()">위급연락망</a></li>
+    <li><a href="#team" onclick="closeMenu()">섬기는 사람들</a></li>
+    <li><a href="#apply" class="nav-cta" onclick="closeMenu()">상담신청</a></li>
   </ul>
 </nav>
 
@@ -728,6 +865,37 @@
     <a href="#about" class="btn-outline">사역 알아보기</a>
   </div>
   <div class="hero-scroll">SCROLL</div>
+</section>
+
+<!-- ── 인사말 ──────────────────────────────────────── -->
+<section id="greeting" style="background: var(--green-deep); padding: 80px 24px;">
+  <div class="container" style="max-width: 760px;">
+    <p class="section-tag" style="color: var(--gold);">Greeting</p>
+    <div class="divider" style="background: var(--gold);"></div>
+    <div style="color: var(--text-light); font-size: 15.5px; line-height: 2.1; word-break: keep-all;">
+      <p style="margin-bottom: 1.6em;">
+        하나님의 평강이 공동체를 섬기시는 모든 분들과 함께 하기를 기도합니다!
+      </p>
+      <p style="margin-bottom: 1.6em;">
+        온누리교회 공동체는 단순히 지역적으로 모이는 것을 넘어, 하나의 교회로서 아름답게 기능하고 있습니다. 건강한 공동체를 이루어 가기 위해서는 성도들의 연약한 모습을 사랑으로 품어주고, 건강한 사람과 연약한 사람이 서로 어우러지는 <strong style="color: var(--gold-light);">헤세드 공동체</strong>를 만들어 가야 합니다.
+      </p>
+      <p style="margin-bottom: 1.6em;">
+        하지만 공동체 안에서 고통을 호소하거나 연약한 모습을 보이는 성도들을 돌보는 일은 결코 쉬운 여정이 아닙니다. 온누리교회 회복사역에서는 지난 24년 동안 정서적, 정신적으로 어려움을 겪고 있는 성도들을 따뜻하게 돌보는 사역과 프로그램들을 운영해 왔습니다. 공동체 안에서 고통을 겪고 있는 성도들과 그 가족들을 보다 효과적으로 돕기 위해 <strong style="color: var(--gold-light);">"정품사역(정서적·정신적으로 연약한 사람들을 품는 사역)"</strong>을 시행하고 있습니다.
+      </p>
+      <p style="margin-bottom: 1.6em;">
+        정품사역은 성도들의 전인적인 건강 회복을 돕고, 공동체 리더십들이 연약한 성도들을 잘 돌볼 수 있도록 지원하며 교육하고 있습니다. 이 매뉴얼은 공동체의 모든 성도들이 연약한 이웃을 건강하게 돌볼 수 있도록 돕기 위해 준비되었습니다.
+      </p>
+      <p style="margin-bottom: 1.6em;">
+        온누리 공동체가 이 매뉴얼을 통해 주님께서 원하시는 건강하고 성숙한 공동체로 함께 성장해 가기를 바랍니다. 이 매뉴얼이 회복의 여정을 걷는 분들에게 든든한 동반자가 되기를 소망합니다.
+      </p>
+      <p style="margin-bottom: 1.6em;">
+        주님의 지혜와 사랑이 여러분의 섬김과 함께 하시기를 축복합니다.
+      </p>
+      <p style="margin-top: 2.4em; padding-top: 1.6em; border-top: 1px solid rgba(196,168,98,.3); color: var(--gold-light); font-weight: 600; letter-spacing: .04em;">
+        온누리교회 회복사역본부
+      </p>
+    </div>
+  </div>
 </section>
 
 <!-- ── 사역소개 ─────────────────────────────────────── -->
@@ -782,8 +950,163 @@
         </div>
       </div>
     </div>
+
+    <!-- 전문 보기 버튼 -->
+    <div style="text-align:center; margin-top:48px;">
+      <button onclick="openAboutModal()" class="btn-gold" style="cursor:pointer; border:none; font-size:14px; padding:14px 36px;">
+        정품사역 소개 전문 보기
+      </button>
+    </div>
   </div>
 </section>
+
+<!-- ── 체크리스트 모달 ─────────────────────────────── -->
+<div id="checklistModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:2000; overflow-y:auto; padding:40px 20px;">
+  <div style="background:#fff; max-width:680px; margin:0 auto; border-radius:20px; overflow:hidden; box-shadow:0 24px 80px rgba(0,0,0,.2);">
+    <div style="background:var(--green-deep); padding:24px 32px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h2 style="color:var(--cream); font-size:18px; font-weight:700; margin-bottom:4px;">돌봄 필요도 체크리스트</h2>
+        <p style="color:rgba(240,237,230,.6); font-size:12px;">순장·사역자가 성도를 관찰할 때 사용하는 참고 도구입니다</p>
+      </div>
+      <button onclick="closeChecklist()" style="background:none; border:none; color:var(--cream); font-size:24px; cursor:pointer;">✕</button>
+    </div>
+
+    <div style="padding:28px 32px;">
+      <div style="background:#fff8e1; border-left:3px solid var(--gold); padding:12px 16px; border-radius:0 8px 8px 0; font-size:12.5px; color:#7a6000; margin-bottom:28px; line-height:1.7;">
+        ⚠️ 이 체크리스트는 <strong>임상 진단 도구가 아닙니다.</strong> 공동체 돌봄을 위한 참고 자료이며, 전문적인 진단과 치료는 반드시 정신건강의학과 전문의에게 받으십시오.
+      </div>
+
+      <!-- 영역 1 -->
+      <div class="cl-section">
+        <h4 class="cl-title">🌧 기분과 감정</h4>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 2주 이상 지속적으로 우울하거나 무기력해 보입니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 예전에 좋아하던 활동에 흥미를 잃은 것 같습니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 감정 기복이 심하거나 이유 없이 울거나 화를 냅니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 자신을 무가치하거나 죄책감이 많다고 표현합니다</label>
+      </div>
+
+      <!-- 영역 2 -->
+      <div class="cl-section">
+        <h4 class="cl-title">😰 불안과 긴장</h4>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 사소한 일에도 지나치게 걱정하거나 두려워합니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 갑자기 심장이 빨리 뛰거나 숨이 막히는 증상을 호소합니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 특정 장소·상황을 극도로 피하려 합니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 같은 행동을 반복하거나 특정 생각에서 벗어나지 못합니다</label>
+      </div>
+
+      <!-- 영역 3 -->
+      <div class="cl-section">
+        <h4 class="cl-title">😴 신체 및 생활</h4>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 수면이 현저히 줄거나 지나치게 많이 잡니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 급격한 체중 변화(감소 또는 증가)가 있습니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 집중력이 떨어져 업무나 대화 중 자주 멍해집니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 원인 불명의 두통·소화불량 등 신체 증상을 자주 호소합니다</label>
+      </div>
+
+      <!-- 영역 4 -->
+      <div class="cl-section">
+        <h4 class="cl-title">🤝 관계와 공동체</h4>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 공동체 모임에 반복적으로 결석하거나 연락을 피합니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 주변 사람들과의 관계가 눈에 띄게 단절되었습니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="1"> 평소와 다른 이상한 말이나 행동이 관찰됩니다</label>
+      </div>
+
+      <!-- 영역 5 — 위험신호 (가중치 3) -->
+      <div class="cl-section" style="background:#fff5f7; border:1.5px solid #f06595; border-radius:12px; padding:16px 20px;">
+        <h4 class="cl-title" style="color:#c0005a;">🚨 즉각 연락이 필요한 위험신호</h4>
+        <p style="font-size:12px; color:#c0005a; margin-bottom:12px;">아래 중 하나라도 해당하면 즉시 담당 사역자·팀장에게 연락하십시오.</p>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="3"> 죽고 싶다 / 사라지고 싶다는 말을 합니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="3"> 자해 흔적이나 자해 도구(칼, 약물 등)가 발견됩니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="3"> 수일째 연락이 완전히 두절되어 있습니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="3"> 타인을 해칠 것이라는 말이나 행동이 있습니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="3"> 갑자기 소중한 물건을 나눠주거나 작별 인사를 합니다</label>
+        <label class="cl-item"><input type="checkbox" class="cl-check" data-score="3"> 현실과 동떨어진 이야기를 진지하게 반복적으로 말합니다</label>
+      </div>
+
+      <!-- 결과 -->
+      <div id="cl-result" style="display:none; margin-top:24px; border-radius:12px; padding:20px 24px; text-align:center;">
+        <div id="cl-result-icon" style="font-size:32px; margin-bottom:8px;"></div>
+        <div id="cl-result-level" style="font-size:17px; font-weight:700; margin-bottom:6px;"></div>
+        <div id="cl-result-desc" style="font-size:13.5px; line-height:1.8; margin-bottom:16px;"></div>
+        <button id="cl-apply-btn" style="display:none; background:var(--green-deep); color:var(--cream); border:none; border-radius:8px; padding:12px 28px; font-size:14px; font-weight:700; cursor:pointer;" onclick="closeChecklist(); document.getElementById('apply').scrollIntoView({behavior:'smooth'});">
+          상담 신청하기 →
+        </button>
+      </div>
+
+      <div style="display:flex; justify-content:center; margin-top:24px; gap:12px;">
+        <button onclick="runChecklist()" style="background:var(--gold); color:var(--green-deep); border:none; border-radius:8px; padding:13px 32px; font-size:14px; font-weight:700; cursor:pointer;">결과 확인하기</button>
+        <button onclick="resetChecklist()" style="background:var(--cream-dark); color:var(--text-mid); border:none; border-radius:8px; padding:13px 24px; font-size:14px; cursor:pointer;">초기화</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 정품사역 소개 전문 모달 -->
+<div id="aboutModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:2000; overflow-y:auto; padding:40px 20px;">
+  <div style="background:#fff; max-width:720px; margin:0 auto; border-radius:20px; overflow:hidden; box-shadow:0 24px 80px rgba(0,0,0,.2);">
+    <div style="background:var(--green-deep); padding:28px 32px; display:flex; justify-content:space-between; align-items:center;">
+      <h2 style="color:var(--cream); font-size:20px; font-weight:700;">온누리교회 정품사역 소개</h2>
+      <button onclick="closeAboutModal()" style="background:none; border:none; color:var(--cream); font-size:24px; cursor:pointer; line-height:1;">✕</button>
+    </div>
+    <div style="padding:36px 32px; line-height:1.9; color:var(--text-dark); font-size:14.5px;">
+
+      <h3 style="font-size:16px; font-weight:700; color:var(--green-deep); margin-bottom:12px;">온누리교회 돌봄의 구조</h3>
+      <table style="width:100%; border-collapse:collapse; margin-bottom:24px; font-size:13.5px;">
+        <thead><tr style="background:var(--green-deep); color:var(--cream);">
+          <th style="padding:10px 14px; text-align:left;">구분</th>
+          <th style="padding:10px 14px; text-align:left;">주요 역할</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--cream-dark);"><td style="padding:10px 14px; font-weight:600;">순장 및 공동체 리더십</td><td style="padding:10px 14px;">성도의 어려움 감지, 경청과 중보, 관계적 동행</td></tr>
+          <tr style="border-bottom:1px solid var(--cream-dark);"><td style="padding:10px 14px; font-weight:600;">공동체 정품사역자</td><td style="padding:10px 14px;">순장과 협력, 사역팀과 연계, 회복 자원 연결</td></tr>
+          <tr><td style="padding:10px 14px; font-weight:600;">정품사역팀</td><td style="padding:10px 14px;">교육, 자문, 사례관리, 전문기관 네트워크 운영</td></tr>
+        </tbody>
+      </table>
+
+      <p style="margin-bottom:16px;"><strong>1. 순장 및 공동체 리더십 (현장 돌봄자)</strong><br>
+      공동체 내에서 성도의 상태를 가장 가까이 관찰하고, 필요한 경우 정품사역자에게 상황을 전달한다. 정서적 공감과 신앙적 중보의 자리를 지킨다.</p>
+
+      <p style="margin-bottom:16px;"><strong>2. 공동체 정품사역자 (연결자)</strong><br>
+      순장과 함께 성도의 상황을 살피고, 정품사역팀과 협력하여 필요한 도움을 제공한다. 문제를 해결하려 하지 않고, 진단 및 치료센터, 상담센터, 회복사역 프로그램 등 적절한 자원으로 연결하는 역할을 담당한다.</p>
+
+      <p style="margin-bottom:32px;"><strong>3. 정품사역팀 (지원체계)</strong><br>
+      교회 전체의 정품사역을 관리·지원하며, 정신과 전문의, 정신보건 사회복지사, 심리상담사 등 전문 지식인과의 논의를 통해 교육과 자문, 네트워크를 제공한다. 외부 전문기관과의 협력 관계를 유지하고, 필요 시 교역자와 함께 상담·의료·회복사역으로 연계한다.</p>
+
+      <hr style="border:none; border-top:1px solid var(--cream-dark); margin-bottom:28px;">
+
+      <h3 style="font-size:16px; font-weight:700; color:var(--green-deep); margin-bottom:16px;">정품사역 진행 4단계</h3>
+      <ol style="padding-left:20px; margin-bottom:32px;">
+        <li style="margin-bottom:10px;"><strong>관찰과 경청</strong> — 순장이 성도의 어려움을 가장 먼저 발견하고, 마음의 신호를 감지한다.</li>
+        <li style="margin-bottom:10px;"><strong>기도와 돌봄</strong> — 빠른 조언보다 기도로 함께하며, 안전한 관계로 돌봄의 기초를 형성한다.</li>
+        <li style="margin-bottom:10px;"><strong>공동체 정품사역자에게 연결</strong> — 순장이 감지한 상황을 공동체 리더십과 정품사역자에게 공유한다.</li>
+        <li style="margin-bottom:10px;"><strong>정품사역팀 및 교역자 연계</strong> — 정품사역자가 정품사역팀과 협력해 적절한 도움을 연결한다.</li>
+      </ol>
+
+      <hr style="border:none; border-top:1px solid var(--cream-dark); margin-bottom:28px;">
+
+      <h3 style="font-size:16px; font-weight:700; color:var(--green-deep); margin-bottom:16px;">기본 원칙 3가지</h3>
+      <p style="margin-bottom:16px;"><strong>1. 하나님께서 회복시키신다 — 우리는 동행자</strong><br>
+      순장도, 정품사역자도, 교역자도 해결자가 아니라 동행자다. 회복의 주인은 하나님이며, 우리는 그 손길이 전해지는 통로다.</p>
+      <p style="margin-bottom:16px;"><strong>2. 혼자가 아니라 함께 돕는다 — 협력이 안전을 만든다</strong><br>
+      정품사역은 절대 혼자 감당하는 일이 아니다. 순장(현장의 눈) · 정품사역자(전문적 연결) · 정품사역팀(자원 조율) · 교역자(영적·공동체적 총괄)의 역할이 유기적으로 연결될 때 안전하게 진행된다.</p>
+      <p style="margin-bottom:32px;"><strong>3. 비밀을 지켜야 신뢰가 생긴다 — 존중이 회복의 시작</strong><br>
+      정보 공유는 '이 사람을 돕기 위해 꼭 필요한 사람에게만', 사실 중심으로 간결하게. 불필요한 추측이나 개인적 평가는 포함하지 않는다.</p>
+
+      <hr style="border:none; border-top:1px solid var(--cream-dark); margin-bottom:28px;">
+
+      <h3 style="font-size:16px; font-weight:700; color:var(--green-deep); margin-bottom:16px;">보고 체계와 절차</h3>
+      <ol style="padding-left:20px; margin-bottom:24px;">
+        <li style="margin-bottom:10px;"><strong>순장 단계</strong> — 성도의 어려움을 관찰하고 정품사역자에게 전달</li>
+        <li style="margin-bottom:10px;"><strong>정품사역자 단계</strong> — 정품사역팀과 협력하여 적절한 회복 방향을 함께 논의</li>
+        <li style="margin-bottom:10px;"><strong>공동체 돌봄 및 공유 단계</strong> — 교역자·장로·다락방장 등 공동체 리더에게 공유</li>
+        <li style="margin-bottom:10px;"><strong>정품사역팀 단계</strong> — 전문기관이나 교회 내 회복사역으로 연결</li>
+      </ol>
+      <p style="font-size:13px; color:var(--text-mid); background:var(--cream); padding:14px 18px; border-radius:8px; border-left:3px solid var(--gold);">
+        보고 시 병명 추정이나 평가 표현을 피하고, 사실 중심의 기록만 남긴다. 모든 정보는 비공개·비판단·비해석의 원칙 아래 다룬다.
+      </p>
+    </div>
+  </div>
+</div>
 
 <!-- ── 돌봄가이드 ───────────────────────────────────── -->
 <section id="guide">
@@ -796,7 +1119,13 @@
       ⚠️ 이 자료는 교육 참고용으로 자체 재구성한 내용입니다. 미국정신의학회 DSM-5-TR을 참고하여 목회 현장에 맞게 요약하였으며, 진단 목적으로 사용하실 수 없습니다. 정확한 진단과 치료는 반드시 정신건강의학과 전문의에게 받으십시오.
     </div>
 
-    <p style="font-size:12px; color:var(--text-mid); margin-bottom:16px; opacity:.7;">카드를 클릭하면 상세 내용을 확인할 수 있습니다.</p>
+    <!-- 체크리스트 버튼 -->
+    <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:20px;">
+      <p style="font-size:12px; color:var(--text-mid); opacity:.7; margin:0;">카드를 클릭하면 상세 내용을 확인할 수 있습니다.</p>
+      <button onclick="openChecklist()" style="margin-left:auto; background:var(--green-deep); color:var(--cream); border:none; border-radius:8px; padding:10px 22px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;">
+        📋 돌봄 필요도 체크리스트
+      </button>
+    </div>
     <div class="guide-grid">
       <div class="guide-card" onclick="openModal('조현병')" style="cursor:pointer;">
         <div class="guide-card-emoji">🧠</div>
@@ -828,6 +1157,11 @@
         <h3>ADHD</h3>
         <p>주의력 결핍 및 과잉행동. 성인기에도 지속될 수 있습니다.</p>
       </div>
+      <div class="guide-card" onclick="openModal('PTSD')" style="cursor:pointer;">
+        <div class="guide-card-emoji">🌪</div>
+        <h3>외상 후 스트레스</h3>
+        <p>충격적 사건 후 지속되는 고통. 플래시백·회피·과각성이 나타납니다.</p>
+      </div>
       <div class="guide-card" onclick="openModal('자해자살')" style="cursor:pointer; grid-column: 1 / -1; background:#fff8f8; border-color:#f06595;">
         <div class="guide-card-emoji">🆘</div>
         <h3 style="color:#8b1a3a;">자해 및 자살 위기</h3>
@@ -857,7 +1191,10 @@
     <p class="section-tag">상담신청</p>
     <h2 class="section-title">필요한 분께<br>먼저 손을 내밉니다</h2>
     <div class="divider"></div>
-    <p class="section-desc">신청은 성도 본인 또는 순장이 할 수 있습니다. 모든 내용은 철저하게 비밀이 보장됩니다.</p>
+    <p class="section-desc">모든 내용은 철저하게 비밀이 보장됩니다.</p>
+    <div style="display:inline-block; background:var(--gold); color:var(--green-deep); font-size:13px; font-weight:700; padding:8px 20px; border-radius:20px; margin-top:4px; margin-bottom:4px;">
+      📋 상담신청은 순장이 작성합니다
+    </div>
 
     <div class="apply-layout">
       <div class="apply-info">
@@ -889,9 +1226,13 @@
         </div>
       </div>
 
+      <div style="background:rgba(255,255,255,.06); border:1px solid rgba(196,168,98,.3); border-radius:10px; padding:14px 18px; margin-bottom:16px; font-size:12px; color:rgba(240,237,230,.7); line-height:1.7;">
+        📋 <strong style="color:var(--gold-light);">개인정보 수집 안내</strong><br>
+        본 양식은 Google Forms를 통해 제출되며 Google 개인정보처리방침이 적용됩니다. 수집 항목(성도 기본 정보, 상담 관련 내용)은 상담 연계 목적으로만 사용되며 정품사역팀 내부에서만 열람됩니다. 정신건강 관련 내용은 민감정보로 처리됩니다.
+      </div>
       <div class="apply-form-area" id="applyFormArea" style="padding:0; overflow:hidden; background:transparent; border:none;">
         <iframe
-          src="https://docs.google.com/forms/d/1xjnk914jq69hbcRZyvdP0RpmIYi4yaS390ByV1zRYTs/viewform?embedded=true"
+          src="https://docs.google.com/forms/d/e/1FAIpQLScSY7q-d39j4GqPrMk3rImwtok3Hqhub-YOYS_cJq9U8BcuDw/viewform?embedded=true"
           width="100%"
           height="720"
           frameborder="0"
@@ -1030,6 +1371,17 @@
 </section>
 
 <script>
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+function closeMenu() {
+  document.getElementById('navLinks').classList.remove('open');
+}
+document.addEventListener('click', function(e) {
+  var nav = document.querySelector('nav');
+  if (!nav.contains(e.target)) closeMenu();
+});
+
 function filterBoard(cat, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
@@ -1153,6 +1505,20 @@ const DISEASES = {
     긴급: ['심각한 자해·공격 행동이 있을 때', '동반 우울·불안이 심각하게 악화될 때'],
     연락처: ['119', '정신건강위기상담 1577-0199'],
   },
+  PTSD: {
+    emoji: '🌪',
+    title: 'PTSD (외상 후 스트레스 장애)',
+    이해: `<p>생명을 위협하는 사건, 심각한 폭력, 성폭력, 사고, 재난, 가정폭력 등 충격적인 경험 이후 4주 이상 심각한 증상이 지속될 때 진단됩니다. 이민 배경, 전쟁 경험, 아동기 학대 피해자에게도 흔합니다.</p>
+    <p><strong>믿음이 부족해서가 아닙니다.</strong> 외상은 뇌의 경보 체계(편도체)를 지속적으로 활성화시키는 신경생물학적 반응입니다. 치료를 통해 회복될 수 있으며, 외상중심 인지행동치료(TF-CBT)와 EMDR이 근거 기반 치료로 알려져 있습니다.</p>`,
+    신호: ['사건 당시 장면이 갑자기 생생하게 떠오르거나 악몽을 꿉니다 (플래시백)', '사건을 떠올리게 하는 장소·사람·대화를 의도적으로 피합니다', '작은 소리나 움직임에도 지나치게 놀라거나 과민반응을 보입니다', '감정이 무뎌지고 타인과 단절된 느낌을 호소합니다', '사건 이후 지속되는 죄책감·수치심·자기 비난이 있습니다', '집중력 저하, 수면 장애, 이유 없는 분노 폭발이 나타납니다'],
+    돌봄: [
+      { 제목: '안전한 환경 먼저 만들기', 내용: '외상을 직접 묻거나 이야기하도록 강요하지 않습니다. "지금 이 공간에서는 안전합니다"라는 신호를 꾸준히 전달하는 것이 가장 중요합니다.' },
+      { 제목: '재경험을 유발하는 질문 삼가기', 내용: '"그때 무슨 일이 있었어요?" 같은 직접적인 질문은 플래시백을 유발할 수 있습니다. 당사자가 먼저 말을 꺼낼 때 경청하고, 판단 없이 함께합니다.' },
+      { 제목: '전문 치료 연계를 적극 안내하기', 내용: '외상 기억은 전문적 개입이 필요합니다. "전문가와 이야기하면 많이 도움이 됩니다"라고 자연스럽게 권유하고, 치료 기관 정보를 함께 찾아드립니다.' },
+    ],
+    긴급: ['자해·자살 충동이 동반될 때', '해리 증상(자신이 몸에서 분리된 느낌)이 심각할 때', '극심한 공황 상태로 일상생활이 완전히 불가능할 때'],
+    연락처: ['119', '자살예방상담 1393', '정신건강위기상담 1577-0199'],
+  },
   자해자살: {
     emoji: '🆘',
     title: '자해 및 자살 위기 대응',
@@ -1227,8 +1593,281 @@ function switchTab(idx, el) {
   document.getElementById('panel' + idx).classList.add('active');
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); closeAboutModal(); }
+});
+
+function openChecklist() {
+  document.getElementById('checklistModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+function closeChecklist() {
+  document.getElementById('checklistModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+document.getElementById('checklistModal').addEventListener('click', function(e) {
+  if (e.target === this) closeChecklist();
+});
+
+function runChecklist() {
+  const checks = document.querySelectorAll('.cl-check');
+  let score = 0;
+  checks.forEach(c => { if (c.checked) score += parseInt(c.dataset.score); });
+
+  const result = document.getElementById('cl-result');
+  const icon = document.getElementById('cl-result-icon');
+  const level = document.getElementById('cl-result-level');
+  const desc = document.getElementById('cl-result-desc');
+  const btn = document.getElementById('cl-apply-btn');
+
+  result.style.display = 'block';
+  btn.style.display = 'none';
+
+  if (score === 0) {
+    result.style.background = '#f0f7f0';
+    icon.textContent = '✅';
+    level.textContent = '현재 특별한 관심이 필요하지 않습니다';
+    level.style.color = '#2a6a2a';
+    desc.textContent = '체크된 항목이 없습니다. 지속적인 관심과 기도로 공동체를 섬겨 주십시오.';
+  } else if (score >= 3 && document.querySelectorAll('.cl-check[data-score="3"]:checked').length > 0) {
+    result.style.background = '#fff0f4';
+    icon.textContent = '🚨';
+    level.textContent = '즉각 연락이 필요합니다';
+    level.style.color = '#c0005a';
+    desc.textContent = '위험신호가 감지되었습니다. 지금 바로 담당 정품사역자 또는 팀장에게 연락하십시오. 혼자 감당하지 마십시오.';
+    btn.style.display = 'inline-block';
+    btn.style.background = '#c0005a';
+  } else if (score >= 5) {
+    result.style.background = '#fff8e1';
+    icon.textContent = '⚠️';
+    level.textContent = '전문 상담 연결을 권장합니다';
+    level.style.color = '#7a5c00';
+    desc.textContent = '여러 영역에서 어려움의 신호가 관찰됩니다. 정품사역 상담을 통해 적절한 도움으로 연결해 드릴 수 있습니다.';
+    btn.style.display = 'inline-block';
+    btn.style.background = 'var(--green-deep)';
+  } else if (score >= 2) {
+    result.style.background = '#f5f8ff';
+    icon.textContent = '👀';
+    level.textContent = '지속적인 관심과 관찰이 필요합니다';
+    level.style.color = '#2a4a8a';
+    desc.textContent = '일부 신호가 감지됩니다. 지속적으로 관심을 기울이며 기도해 주시고, 변화가 있으면 정품사역자와 나눠 주십시오.';
+  } else {
+    result.style.background = '#f5f8ff';
+    icon.textContent = '💛';
+    level.textContent = '관심 어린 돌봄을 유지해 주십시오';
+    level.style.color = '#2a4a8a';
+    desc.textContent = '경미한 신호가 관찰됩니다. 따뜻한 관심과 기도로 함께해 주시고, 상황 변화를 주의 깊게 살펴봐 주십시오.';
+  }
+  result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetChecklist() {
+  document.querySelectorAll('.cl-check').forEach(c => c.checked = false);
+  document.getElementById('cl-result').style.display = 'none';
+}
+
+function openAboutModal() {
+  document.getElementById('aboutModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+function closeAboutModal() {
+  document.getElementById('aboutModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+document.getElementById('aboutModal').addEventListener('click', function(e) {
+  if (e.target === this) closeAboutModal();
+});
 </script>
+
+<!-- ── 위급 연락망 ────────────────────────────────── -->
+<section id="emergency" style="background:var(--green-deep); padding:72px 24px;">
+  <div class="container">
+    <p class="section-tag" style="color:var(--gold);">Emergency</p>
+    <h2 class="section-title" style="color:var(--cream);">위급 연락망</h2>
+    <p class="section-desc" style="color:rgba(240,237,230,.65);">위기 상황 발생 시 혼자 판단하지 말고 즉시 연락하십시오.</p>
+    <div class="divider" style="background:var(--gold);"></div>
+
+    <!-- 즉시 연락 -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:48px;">
+      <a href="tel:112" style="text-decoration:none; background:rgba(255,255,255,.07); border:1px solid rgba(196,168,98,.3); border-radius:14px; padding:24px 20px; text-align:center; display:block; transition:.2s;" onmouseover="this.style.background='rgba(255,255,255,.13)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">
+        <div style="font-size:28px; margin-bottom:8px;">🚨</div>
+        <div style="font-size:22px; font-weight:800; color:var(--gold); margin-bottom:4px;">112</div>
+        <div style="font-size:12px; color:rgba(240,237,230,.7);">긴급 응급</div>
+      </a>
+      <a href="tel:15770199" style="text-decoration:none; background:rgba(255,255,255,.07); border:1px solid rgba(196,168,98,.3); border-radius:14px; padding:24px 20px; text-align:center; display:block; transition:.2s;" onmouseover="this.style.background='rgba(255,255,255,.13)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">
+        <div style="font-size:28px; margin-bottom:8px;">💬</div>
+        <div style="font-size:22px; font-weight:800; color:var(--gold); margin-bottom:4px;">1577-0199</div>
+        <div style="font-size:12px; color:rgba(240,237,230,.7);">정신건강위기상담 (24시간)</div>
+      </a>
+      <a href="tel:129" style="text-decoration:none; background:rgba(255,255,255,.07); border:1px solid rgba(196,168,98,.3); border-radius:14px; padding:24px 20px; text-align:center; display:block; transition:.2s;" onmouseover="this.style.background='rgba(255,255,255,.13)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">
+        <div style="font-size:28px; margin-bottom:8px;">🤝</div>
+        <div style="font-size:22px; font-weight:800; color:var(--gold); margin-bottom:4px;">129</div>
+        <div style="font-size:12px; color:rgba(240,237,230,.7);">복지상담</div>
+      </a>
+    </div>
+
+    <!-- 도움 요청 단계 -->
+    <div style="background:rgba(255,255,255,.05); border-radius:16px; padding:28px 32px; margin-bottom:48px;">
+      <h3 style="font-size:15px; font-weight:700; color:var(--gold-light); margin-bottom:20px;">📋 도움 요청 단계</h3>
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div style="display:flex; gap:14px; align-items:flex-start;">
+          <span style="background:var(--gold); color:var(--green-deep); font-weight:800; font-size:12px; min-width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">1</span>
+          <p style="color:rgba(240,237,230,.85); font-size:13.5px; line-height:1.7; margin:0;"><strong style="color:var(--cream);">정품사역자에게 먼저 알린다</strong> — 혼자 판단하지 말고 정품사역자와 연결하여 정품사역팀 또는 교역자와 상의한다.</p>
+        </div>
+        <div style="display:flex; gap:14px; align-items:flex-start;">
+          <span style="background:var(--gold); color:var(--green-deep); font-weight:800; font-size:12px; min-width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">2</span>
+          <p style="color:rgba(240,237,230,.85); font-size:13.5px; line-height:1.7; margin:0;"><strong style="color:var(--cream);">정품사역팀이 적절한 기관을 안내한다</strong> — 정신건강복지센터 → 국립병원 → 지역 전문의 순으로 연계된다.</p>
+        </div>
+        <div style="display:flex; gap:14px; align-items:flex-start;">
+          <span style="background:#c0005a; color:white; font-weight:800; font-size:12px; min-width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;">!</span>
+          <p style="color:rgba(240,237,230,.85); font-size:13.5px; line-height:1.7; margin:0;"><strong style="color:#ffb3cc;">응급 상황 시 지체하지 않는다</strong> — 즉시 112 또는 1577-0199(정신건강위기상담) / 129(복지상담)로 연락한다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 교회 내 연계망 -->
+    <h3 style="font-size:15px; font-weight:700; color:var(--gold-light); margin-bottom:16px;">⛪ 교회 내 회복·상담 연계망</h3>
+    <div style="overflow-x:auto; margin-bottom:48px;">
+      <table style="width:100%; border-collapse:collapse; font-size:13px;">
+        <thead><tr style="background:rgba(196,168,98,.2);">
+          <th style="padding:10px 14px; text-align:left; color:var(--gold-light); font-weight:600;">구분</th>
+          <th style="padding:10px 14px; text-align:left; color:var(--gold-light); font-weight:600;">기관명</th>
+          <th style="padding:10px 14px; text-align:left; color:var(--gold-light); font-weight:600;">역할</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);">
+            <td style="padding:10px 14px; color:rgba(240,237,230,.9);">회복사역본부</td>
+            <td style="padding:10px 14px; color:rgba(240,237,230,.9);">온누리교회</td>
+            <td style="padding:10px 14px; color:rgba(240,237,230,.65);">회복사역 전반 지원, 정품사역 관리 및 연계, 회복예배·한마음정신예배·월요치유집회 운영</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);">
+            <td style="padding:10px 14px; color:rgba(240,237,230,.9);">정품사역팀</td>
+            <td style="padding:10px 14px; color:rgba(240,237,230,.9);">—</td>
+            <td style="padding:10px 14px; color:rgba(240,237,230,.65);">각 캠퍼스 정품사역자 관리, 사례 자문 및 외부기관 협력, 교역자 및 상담기관 연계</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px; color:rgba(240,237,230,.9);">온누리상담센터</td>
+            <td style="padding:10px 14px; color:rgba(240,237,230,.9);">—</td>
+            <td style="padding:10px 14px; color:rgba(240,237,230,.65);">심리상담, 가족상담, 위기 개입 (사전 예약 필수)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 광역정신건강복지센터 -->
+    <h3 style="font-size:15px; font-weight:700; color:var(--gold-light); margin-bottom:16px;">🏥 광역정신건강복지센터</h3>
+    <div style="overflow-x:auto; margin-bottom:16px;">
+      <table style="width:100%; border-collapse:collapse; font-size:13px;">
+        <thead><tr style="background:rgba(196,168,98,.2);">
+          <th style="padding:10px 14px; text-align:left; color:var(--gold-light); font-weight:600;">지역</th>
+          <th style="padding:10px 14px; text-align:left; color:var(--gold-light); font-weight:600;">주소</th>
+          <th style="padding:10px 14px; text-align:left; color:var(--gold-light); font-weight:600;">연락처</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:10px 14px; color:rgba(240,237,230,.9);">서울시</td><td style="padding:10px 14px; color:rgba(240,237,230,.65);">종로구 동숭3길 40</td><td style="padding:10px 14px;"><a href="tel:0234449934" style="color:var(--gold-light); text-decoration:none;">02-3444-9934</a></td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:10px 14px; color:rgba(240,237,230,.9);">인천광역시</td><td style="padding:10px 14px; color:rgba(240,237,230,.65);">미추홀구 경인로 299 인천IT타워 20층</td><td style="padding:10px 14px;"><a href="tel:0324689911" style="color:var(--gold-light); text-decoration:none;">032-468-9911</a></td></tr>
+          <tr><td style="padding:10px 14px; color:rgba(240,237,230,.9);">경기도</td><td style="padding:10px 14px; color:rgba(240,237,230,.65);">수원시 장안구 수성로 245번길 69</td><td style="padding:10px 14px;"><a href="tel:0312120435" style="color:var(--gold-light); text-decoration:none;">031-212-0435</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px; color:rgba(240,237,230,.4); margin-bottom:48px;">전국 시·도별 광역정신건강복지센터: <a href="https://www.mentalhealth.go.kr" target="_blank" rel="noopener" style="color:var(--gold-light);">www.mentalhealth.go.kr</a></p>
+
+    <!-- 국립 정신건강의학기관 -->
+    <h3 style="font-size:15px; font-weight:700; color:var(--gold-light); margin-bottom:16px;">🏛 국립 정신건강의학기관</h3>
+    <div style="overflow-x:auto; margin-bottom:48px;">
+      <table style="width:100%; border-collapse:collapse; font-size:13px;">
+        <thead><tr style="background:rgba(196,168,98,.2);">
+          <th style="padding:10px 14px; text-align:left; color:var(--gold-light); font-weight:600;">기관명</th>
+          <th style="padding:10px 14px; text-align:left; color:var(--gold-light); font-weight:600;">주소</th>
+          <th style="padding:10px 14px; text-align:left; color:var(--gold-light); font-weight:600;">연락처</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:10px 14px; color:rgba(240,237,230,.9);">국립정신건강센터</td><td style="padding:10px 14px; color:rgba(240,237,230,.65);">서울시 광진구 용마산로 127</td><td style="padding:10px 14px;"><a href="tel:0222040114" style="color:var(--gold-light); text-decoration:none;">02-2204-0114</a></td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:10px 14px; color:rgba(240,237,230,.9);">국립공주병원</td><td style="padding:10px 14px; color:rgba(240,237,230,.65);">충남 공주시 고분티로 623-21</td><td style="padding:10px 14px;"><a href="tel:0418505700" style="color:var(--gold-light); text-decoration:none;">041-850-5700</a></td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:10px 14px; color:rgba(240,237,230,.9);">국립나주병원</td><td style="padding:10px 14px; color:rgba(240,237,230,.65);">전남 나주시 산포면 세남로 1328-31</td><td style="padding:10px 14px;"><a href="tel:0613304114" style="color:var(--gold-light); text-decoration:none;">061-330-4114</a></td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:10px 14px; color:rgba(240,237,230,.9);">국립부곡병원</td><td style="padding:10px 14px; color:rgba(240,237,230,.65);">경남 창녕군 부곡면 부곡로 145</td><td style="padding:10px 14px;"><a href="tel:0555366440" style="color:var(--gold-light); text-decoration:none;">055-536-6440</a></td></tr>
+          <tr><td style="padding:10px 14px; color:rgba(240,237,230,.9);">국립춘천병원</td><td style="padding:10px 14px; color:rgba(240,237,230,.65);">강원도 춘천시 동산면 영서로 824</td><td style="padding:10px 14px;"><a href="tel:0332603000" style="color:var(--gold-light); text-decoration:none;">033-260-3000</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 민간 단체 -->
+    <h3 style="font-size:15px; font-weight:700; color:var(--gold-light); margin-bottom:16px;">🤲 주요 민간단체 및 협회</h3>
+    <div style="overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; font-size:12.5px;">
+        <thead><tr style="background:rgba(196,168,98,.2);">
+          <th style="padding:10px 14px; text-align:left; color:var(--gold-light); font-weight:600;">단체명</th>
+          <th style="padding:10px 14px; text-align:left; color:var(--gold-light); font-weight:600;">연락처</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:9px 14px; color:rgba(240,237,230,.85);">한국정신건강사회복지사협회</td><td style="padding:9px 14px;"><a href="tel:027025638" style="color:var(--gold-light); text-decoration:none;">02-702-5638</a></td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:9px 14px; color:rgba(240,237,230,.85);">한국정신사회재활협회</td><td style="padding:9px 14px;"><a href="tel:0422520360" style="color:var(--gold-light); text-decoration:none;">042-252-0360</a></td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:9px 14px; color:rgba(240,237,230,.85);">한국중독관리통합지원센터협회</td><td style="padding:9px 14px;"><a href="tel:07046931775" style="color:var(--gold-light); text-decoration:none;">070-4693-1775</a></td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:9px 14px; color:rgba(240,237,230,.85);">한국자살예방협회</td><td style="padding:9px 14px;"><a href="tel:024130892" style="color:var(--gold-light); text-decoration:none;">02-413-0892~3</a></td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:9px 14px; color:rgba(240,237,230,.85);">대한간호협회 정신간호사회</td><td style="padding:9px 14px;"><a href="tel:024251271" style="color:var(--gold-light); text-decoration:none;">02-425-1271</a></td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:9px 14px; color:rgba(240,237,230,.85);">(사)대한정신장애인가족협회</td><td style="padding:9px 14px;"><a href="tel:0448689324" style="color:var(--gold-light); text-decoration:none;">044-868-9324~5</a></td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:9px 14px; color:rgba(240,237,230,.85);">대한소아청소년정신의학회</td><td style="padding:9px 14px;"><a href="tel:025763302" style="color:var(--gold-light); text-decoration:none;">02-576-3302</a></td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:9px 14px; color:rgba(240,237,230,.85);">대한신경정신의학회</td><td style="padding:9px 14px;"><a href="tel:025376171" style="color:var(--gold-light); text-decoration:none;">02-537-6171</a></td></tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08);"><td style="padding:9px 14px; color:rgba(240,237,230,.85);">대한트라우마스트레스학회</td><td style="padding:9px 14px; color:rgba(240,237,230,.4);">—</td></tr>
+          <tr><td style="padding:9px 14px; color:rgba(240,237,230,.85);">(사)한국정신장애연대 KAMI</td><td style="padding:9px 14px;"><a href="tel:027412060" style="color:var(--gold-light); text-decoration:none;">02-741-2060</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── 섬기는 사람들 ──────────────────────────────── -->
+<section id="team">
+  <div class="container">
+    <p class="section-tag">Our Team</p>
+    <h2 class="section-title">섬기는 사람들</h2>
+    <p class="section-desc">온누리교회 각 공동체에서 정품사역을 함께 감당하는 사역자들입니다.</p>
+    <div class="divider"></div>
+
+    <!-- 조직 -->
+    <div class="team-org">
+      <div class="org-card">
+        <div class="org-role">정품사역본부</div>
+        <div class="org-name">김성욱 목사</div>
+      </div>
+      <div class="org-arrow">›</div>
+      <div class="org-card">
+        <div class="org-role">대표장로</div>
+        <div class="org-name">김지현 장로</div>
+      </div>
+      <div class="org-arrow">›</div>
+      <div class="org-card">
+        <div class="org-role">팀장</div>
+        <div class="org-name">정용모</div>
+      </div>
+    </div>
+
+    <!-- 공동체별 사역자 -->
+    <div class="team-grid">
+      <div class="community-card"><h4>강촌공동체</h4><ul><li>장미경</li><li>박미룡</li><li>선우미숙</li></ul></div>
+      <div class="community-card"><h4>여의도공동체</h4><ul><li>정제영</li></ul></div>
+      <div class="community-card"><h4>성북공동체</h4><ul><li>이순자</li></ul></div>
+      <div class="community-card"><h4>동대문중랑공동체</h4><ul><li>강수미</li></ul></div>
+      <div class="community-card"><h4>가정사역공동체</h4><ul><li>김성환</li><li>김명희</li></ul></div>
+      <div class="community-card"><h4>관악금천공동체</h4><ul><li>이석구</li><li>박정순</li></ul></div>
+      <div class="community-card"><h4>노원공동체</h4><ul><li>김순태</li><li>최현주</li></ul></div>
+      <div class="community-card"><h4>서대문공동체</h4><ul><li>김현기</li><li>유용선</li></ul></div>
+      <div class="community-card"><h4>이촌공동체</h4><ul><li>박영우</li><li>김부화</li></ul></div>
+      <div class="community-card"><h4>마포공동체</h4><ul><li>정회평</li><li>윤숙영</li></ul></div>
+      <div class="community-card"><h4>강서공동체</h4><ul><li>이종근</li><li>이명자</li></ul></div>
+      <div class="community-card"><h4>일산공동체</h4><ul><li>박화진</li><li>최정숙</li></ul></div>
+      <div class="community-card"><h4>S-Bridge공동체</h4><ul><li>유영석</li><li>이승연</li><li>이희진</li><li>황혜영</li><li>박민균</li><li>박정훈</li></ul></div>
+      <div class="community-card"><h4>고양은평공동체</h4><ul><li>정희준</li><li>맹윤덕</li></ul></div>
+      <div class="community-card"><h4>중종로공동체</h4><ul><li>홍정표</li><li>홍숙경</li></ul></div>
+      <div class="community-card"><h4>신용산공동체</h4><ul><li>김현태</li><li>김병희</li></ul></div>
+      <div class="community-card"><h4>영등포구로공동체</h4><ul><li>서은영</li><li>신태수</li><li>이종미</li></ul></div>
+      <div class="community-card"><h4>성동광진공동체</h4><ul><li>손형배</li><li>임영주</li></ul></div>
+      <div class="community-card"><h4>일산파주공동체</h4><ul><li>이신창</li><li>이화영</li></ul></div>
+    </div>
+
+    <p class="team-privacy">* 사역자 동의 전까지 공동체명·이름만 표시합니다. 연락처는 별도 문의 바랍니다.</p>
+  </div>
+</section>
 
 <!-- ── 푸터 ───────────────────────────────────────── -->
 <footer>
@@ -1252,14 +1891,15 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
       <ul>
         <li><a href="tel:1393">자살예방상담 1393</a></li>
         <li><a href="tel:15770199">정신건강위기 1577-0199</a></li>
-        <li><a href="#">온누리교회 상담센터</a></li>
-        <li><a href="#">한마음공동체</a></li>
+        <li><span style="cursor:default; opacity:.6;">온누리교회 상담센터</span></li>
+        <li><span style="cursor:default; opacity:.6;">한마음공동체</span></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
     <span>© 2026 온누리교회 회복사역본부 정품사역팀</span>
     <span>참고출처: 미국정신의학회 DSM-5-TR (자체 재구성 요약)</span>
+    <span style="display:block; margin-top:6px; font-size:10px; color:rgba(240,237,230,.35);">개인정보 수집·이용 목적: 상담 연계 | 보유기간: 상담 종결 후 3년 | 문의: 정품사역팀</span>
   </div>
 </footer>
 
