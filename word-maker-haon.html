@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>하온 단어 노트</title>
+  <style>
+    :root {
+      --accent: #34d399;
+      --accent2: #10b981;
+      --accent-dim: rgba(52, 211, 153, 0.12);
+      --accent-border: rgba(52, 211, 153, 0.3);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'Noto Sans KR', sans-serif;
+      background: #0f1a14;
+      color: #e8f0ec;
+      min-height: 100vh;
+      padding: 28px 16px 60px;
+    }
+    .top-badge {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-bottom: 6px;
+    }
+    .grade-chip {
+      background: var(--accent-dim); color: var(--accent);
+      border: 1px solid var(--accent-border);
+      border-radius: 20px; padding: 3px 12px; font-size: 12px; font-weight: 700;
+    }
+    h1 {
+      font-size: 22px; font-weight: 800; text-align: center;
+      color: var(--accent); margin-bottom: 4px;
+    }
+    .subtitle { text-align: center; font-size: 13px; color: #666; margin-bottom: 28px; }
+
+    .card {
+      background: #141f18; border: 1px solid #1e2e22;
+      border-radius: 16px; padding: 20px; margin-bottom: 14px;
+    }
+    label {
+      display: block; font-size: 11px; color: #6b9e80; margin-bottom: 8px;
+      font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    input[type="text"] {
+      width: 100%; background: #0a120c;
+      border: 1.5px solid #1e2e22; border-radius: 10px;
+      padding: 14px 16px; font-size: 20px; color: #e8f0ec;
+      outline: none; transition: border-color 0.2s;
+    }
+    input[type="text"]:focus { border-color: var(--accent); }
+    input[type="text"]::placeholder { color: #333; }
+
+    .btn-generate {
+      width: 100%; padding: 16px; border-radius: 12px; border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #0a120c; font-size: 16px; font-weight: 800;
+      cursor: pointer; margin-bottom: 6px; transition: opacity 0.2s;
+    }
+    .btn-generate:active { opacity: 0.8; }
+    .btn-generate:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .status {
+      text-align: center; font-size: 13px; color: #555;
+      padding: 6px 0; min-height: 26px;
+    }
+    .status.loading { color: var(--accent); }
+    .status.error   { color: #f87171; }
+    .status.done    { color: var(--accent); }
+
+    .result-section { display: none; }
+    .result-section.visible { display: block; }
+
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .info-item { background: #0a120c; border-radius: 10px; padding: 12px; }
+    .info-item .key { font-size: 11px; color: #4a7a5a; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+    .info-item .val { font-size: 15px; color: #e8f0ec; }
+    .info-item.full { grid-column: span 2; }
+
+    .tag { border-radius: 6px; padding: 3px 10px; font-size: 13px; display: inline-block; margin: 2px; }
+    .syn { background: rgba(52,211,153,0.12); color: #34d399; }
+    .ant { background: rgba(248,113,113,0.12); color: #f87171; }
+    .root { background: rgba(52,211,153,0.18); color: #34d399; font-weight: 700; }
+
+    .btn-send {
+      width: 100%; padding: 18px; border-radius: 14px; border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #0a120c; font-size: 17px; font-weight: 800;
+      cursor: pointer; transition: opacity 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-send:active { opacity: 0.8; }
+
+    .how-to {
+      background: var(--accent-dim); border: 1px solid var(--accent-border);
+      border-radius: 12px; padding: 16px;
+      font-size: 13px; line-height: 1.9; color: #8ab89e;
+    }
+    .how-to b { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <div class="top-badge">
+    <span class="grade-chip">중1</span>
+  </div>
+  <h1>하온의 단어 노트</h1>
+  <p class="subtitle">단어 입력 → 자동 분석 → 옵시디언으로 전달</p>
+
+  <div class="card">
+    <label>단어 입력</label>
+    <input type="text" id="wordInput" placeholder="예: happy, school, friend…"
+           autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" />
+  </div>
+
+  <button class="btn-generate" id="genBtn" onclick="generate()">✨ 노트 생성</button>
+  <div class="status" id="status"></div>
+
+  <div class="result-section" id="result">
+
+    <div class="card">
+      <div class="info-grid" id="infoGrid"></div>
+    </div>
+
+    <div class="card">
+      <button class="btn-send" onclick="sendToObsidian()">
+        📒 옵시디언으로 전달
+      </button>
+      <div style="text-align:center;font-size:12px;color:#4a7a5a;margin-top:10px">
+        탭하면 옵시디언이 열리며 노트가 자동 생성됩니다
+      </div>
+    </div>
+
+    <div class="how-to">
+      <b>전달이 안 될 경우</b><br>
+      설정 → Obsidian → 허용 확인 후 다시 탭해보세요.<br>
+      또는 옵시디언을 먼저 열어두고 탭하세요.
+    </div>
+
+  </div>
+
+<script>
+const VAULT   = "하온_영어볼트";
+const GRADE   = "중1";
+
+const ROOTS = {
+  scrib: { meaning:"쓰다 (write)",       origin:"라틴어 scribere",   keywords:["scrib","scrip","script"] },
+  port:  { meaning:"나르다 (carry)",      origin:"라틴어 portare",    keywords:["port"] },
+  dict:  { meaning:"말하다 (say)",        origin:"라틴어 dicere",     keywords:["dict","dic"] },
+  aud:   { meaning:"듣다 (hear)",         origin:"라틴어 audire",     keywords:["aud","audit"] },
+  vis:   { meaning:"보다 (see)",          origin:"라틴어 videre",     keywords:["vis","vid","view"] },
+  duc:   { meaning:"이끌다 (lead)",       origin:"라틴어 ducere",     keywords:["duc","duct"] },
+  mit:   { meaning:"보내다 (send)",       origin:"라틴어 mittere",    keywords:["mit","miss"] },
+  rupt:  { meaning:"깨다 (break)",        origin:"라틴어 rumpere",    keywords:["rupt"] },
+  spect: { meaning:"보다 (look)",         origin:"라틴어 specere",    keywords:["spect","spec"] },
+  struct:{ meaning:"쌓다 (build)",        origin:"라틴어 struere",    keywords:["struct"] },
+  tract: { meaning:"끌다 (pull)",         origin:"라틴어 trahere",    keywords:["tract","trac"] },
+  vert:  { meaning:"돌리다 (turn)",       origin:"라틴어 vertere",    keywords:["vert","vers"] },
+  voc:   { meaning:"부르다 (call)",       origin:"라틴어 vocare",     keywords:["voc","voke"] },
+  gen:   { meaning:"태어나다 (birth)",    origin:"라틴어 genus",      keywords:["gen"] },
+  graph: { meaning:"쓰다/그리다 (write)", origin:"그리스어 graphein", keywords:["graph","gram"] },
+  log:   { meaning:"말 (word)",           origin:"그리스어 logos",    keywords:["log","logue","logy"] },
+  phon:  { meaning:"소리 (sound)",        origin:"그리스어 phone",    keywords:["phon","phone"] },
+  bio:   { meaning:"생명 (life)",         origin:"그리스어 bios",     keywords:["bio"] },
+  geo:   { meaning:"땅 (earth)",          origin:"그리스어 ge",       keywords:["geo"] },
+};
+const PREFIXES = {
+  de:"완전히/아래로", sub:"아래에", pre:"미리/앞에", trans:"가로질러",
+  ex:"밖으로", im:"안으로", in:"안에/부정", re:"다시/뒤로",
+  con:"함께", com:"함께", pro:"앞으로", inter:"사이에",
+  super:"위에/초월", anti:"반대", un:"부정", dis:"부정/반대",
+  over:"지나치게", out:"밖으로/능가", mis:"잘못",
+};
+const POS_MAP = { noun:"명사", verb:"동사", adjective:"형용사", adverb:"부사",
+                  preposition:"전치사", conjunction:"접속사", exclamation:"감탄사" };
+
+function detectRoot(w) {
+  for (const [n, i] of Object.entries(ROOTS))
+    if (i.keywords.some(k => w.includes(k))) return n;
+  return null;
+}
+function detectPrefix(w) {
+  for (const [p, m] of Object.entries(PREFIXES))
+    if (w.startsWith(p) && w.length > p.length + 2) return [p, m];
+  return [null, null];
+}
+
+async function fetchEn(word) {
+  try {
+    const r = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+    if (!r.ok) return null;
+    return (await r.json())[0] ?? null;
+  } catch { return null; }
+}
+async function fetchKr(word) {
+  try {
+    const r = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(word)}&langpair=en|ko`);
+    const d = await r.json();
+    const t = d?.responseData?.translatedText ?? "";
+    return (t && t !== word) ? t : "";
+  } catch { return ""; }
+}
+
+function parseEn(enData) {
+  let pronunciation = "", pos = "", meaningEn = "", exampleEn = "", synonyms = [], antonyms = [];
+  if (!enData) return { pronunciation, pos, meaningEn, exampleEn, synonyms, antonyms };
+  for (const ph of enData.phonetics ?? []) { if (ph.text) { pronunciation = ph.text; break; } }
+  for (const m of enData.meanings ?? []) {
+    if (!pos) pos = POS_MAP[m.partOfSpeech] ?? m.partOfSpeech;
+    for (const d of m.definitions ?? []) {
+      if (!meaningEn) meaningEn = d.definition ?? "";
+      if (!exampleEn) exampleEn = d.example ?? "";
+      synonyms.push(...(d.synonyms ?? []));
+      antonyms.push(...(d.antonyms ?? []));
+    }
+    synonyms.push(...(m.synonyms ?? []));
+    antonyms.push(...(m.antonyms ?? []));
+  }
+  synonyms = [...new Set(synonyms)].slice(0, 4);
+  antonyms = [...new Set(antonyms)].slice(0, 4);
+  return { pronunciation, pos, meaningEn, exampleEn, synonyms, antonyms };
+}
+
+function buildMd(word, parsed, krMeaning, rootName, prefixName, prefixMeaning) {
+  const { pronunciation, pos, meaningEn, exampleEn, synonyms, antonyms } = parsed;
+  const rootInfo   = ROOTS[rootName] ?? {};
+  const prePart    = prefixName ? `${prefixName}(${prefixMeaning}) + ` : "";
+  const rootPart   = rootName   ? `${rootName}(${rootInfo.meaning}) ` : "";
+  const hint       = krMeaning || (meaningEn ? meaningEn.slice(0,30)+"…" : word);
+  const etymText   = (prefixName || rootName)
+    ? `${prePart}${rootPart}→ '${hint}'의 의미가 됩니다`
+    : "직접 어원을 찾아 써보세요!";
+  const rootField  = rootName ? `[[${rootName}]]` : "없음";
+  const synStr     = synonyms.length ? synonyms.map(s=>`[[${s}]]`).join(", ") : "없음";
+  const antStr     = antonyms.length ? antonyms.map(a=>`[[${a}]]`).join(", ") : "없음";
+  const related    = [];
+  if (rootName) related.push(`- [[${rootName}]]`);
+  synonyms.slice(0,2).forEach(s => related.push(`- [[${s}]]`));
+  if (!related.length) related.push("- (직접 추가해보세요)");
+
+  return `---
+단어: ${word}
+발음: ${pronunciation}
+품사: ${pos}
+학년: ${GRADE}
+어원: ${rootField}
+유의어: [${synStr}]
+반의어: [${antStr}]
+---
+
+# 📖 뜻
+> **${word}** : ${krMeaning || "(번역 실패 — 직접 입력)"}
+> (영어) ${meaningEn || "—"}
+
+# 🌱 어원으로 추측하기
+> ${etymText}
+
+# 📌 예문
+| 영어 | 한국어 |
+|------|--------|
+| ${exampleEn || "(예문 없음 — 직접 입력)"} | |
+
+# ✏️ 나만의 예문 (직접 써보세요!)
+> 예문 1:
+> 예문 2:
+
+# 🔗 꼬리에 꼬리를 무는 단어
+${related.join("\n")}
+`;
+}
+
+let currentWord = "";
+let currentMd   = "";
+
+document.getElementById("wordInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") generate();
+});
+
+function setStatus(msg, type="") {
+  const el = document.getElementById("status");
+  el.textContent = msg;
+  el.className = "status " + type;
+}
+
+async function generate() {
+  const word = document.getElementById("wordInput").value.trim().toLowerCase();
+  if (!word) { setStatus("단어를 입력해주세요.", "error"); return; }
+
+  const btn = document.getElementById("genBtn");
+  btn.disabled = true;
+  document.getElementById("result").classList.remove("visible");
+  setStatus("🔍 사전에서 정보 가져오는 중…", "loading");
+
+  const [enData, krMeaning] = await Promise.all([fetchEn(word), fetchKr(word)]);
+  const parsed = parseEn(enData);
+  const rootName = detectRoot(word);
+  const [prefixName, prefixMeaning] = detectPrefix(word);
+
+  currentWord = word;
+  currentMd   = buildMd(word, parsed, krMeaning, rootName, prefixName, prefixMeaning);
+
+  const { pronunciation, pos, meaningEn, synonyms, antonyms } = parsed;
+  const rootInfo = ROOTS[rootName] ?? {};
+
+  document.getElementById("infoGrid").innerHTML = `
+    <div class="info-item full">
+      <div class="key">단어</div>
+      <div class="val" style="font-size:24px;font-weight:800;color:var(--accent)">
+        ${word}
+        <span style="font-size:14px;color:#4a7a5a;font-weight:400;margin-left:6px">${pronunciation}</span>
+      </div>
+    </div>
+    <div class="info-item">
+      <div class="key">한국어</div>
+      <div class="val">${krMeaning || "—"}</div>
+    </div>
+    <div class="info-item">
+      <div class="key">품사</div>
+      <div class="val">${pos || "—"}</div>
+    </div>
+    ${meaningEn ? `
+    <div class="info-item full">
+      <div class="key">영어 뜻</div>
+      <div class="val" style="font-size:13px;color:#8ab89e">${meaningEn}</div>
+    </div>` : ""}
+    ${rootName ? `
+    <div class="info-item full">
+      <div class="key">감지된 어원</div>
+      <div class="val">
+        <span class="tag root">[[${rootName}]]</span>
+        <span style="font-size:13px;color:#4a7a5a;margin-left:4px">${rootInfo.meaning}</span>
+      </div>
+    </div>` : ""}
+    ${prefixName ? `
+    <div class="info-item full">
+      <div class="key">감지된 접두사</div>
+      <div class="val">
+        <span class="tag root">${prefixName}</span>
+        <span style="font-size:13px;color:#4a7a5a;margin-left:4px">${prefixMeaning}</span>
+      </div>
+    </div>` : ""}
+    ${synonyms.length ? `
+    <div class="info-item full">
+      <div class="key">유의어</div>
+      <div class="val">${synonyms.map(s=>`<span class="tag syn">${s}</span>`).join("")}</div>
+    </div>` : ""}
+    ${antonyms.length ? `
+    <div class="info-item full">
+      <div class="key">반의어</div>
+      <div class="val">${antonyms.map(a=>`<span class="tag ant">${a}</span>`).join("")}</div>
+    </div>` : ""}
+  `;
+
+  document.getElementById("result").classList.add("visible");
+  const extras = [rootName && `어원 [[${rootName}]]`, prefixName && `접두사 ${prefixName}`].filter(Boolean);
+  setStatus(`✅ ${word} 노트 준비 완료${extras.length ? " | " + extras.join(", ") : ""}`, "done");
+  btn.disabled = false;
+  document.getElementById("result").scrollIntoView({ behavior: "smooth" });
+}
+
+function sendToObsidian() {
+  if (!currentMd) return;
+  const url = `obsidian://new?vault=${encodeURIComponent(VAULT)}&name=${encodeURIComponent(currentWord)}&content=${encodeURIComponent(currentMd)}`;
+  window.location.href = url;
+}
+</script>
+</body>
+</html>
