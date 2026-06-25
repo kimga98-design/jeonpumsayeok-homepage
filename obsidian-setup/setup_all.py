@@ -1,38 +1,34 @@
 #!/usr/bin/env python3
 """
 하온 + 하진 영어 볼트 생성 스크립트 (맥북 실행용)
-iCloud를 통해 아이패드에서 바로 사용 가능
+iCloud Drive 공유 폴더를 통해 계정이 달라도 아이패드에서 사용 가능
 
 실행 방법:
   python3 setup_all.py
 
-아이패드 사용법:
-  1. 앱스토어에서 'Obsidian' 설치
-  2. Obsidian 실행 → "Open folder as vault" 선택
-  3. iCloud Drive → Obsidian 폴더에서 볼트 선택
+생성 위치:
+  iCloud Drive / 영어볼트_공유 / 하온_영어볼트
+  iCloud Drive / 영어볼트_공유 / 하진_영어볼트
 """
 
 import os
 import sys
 import pathlib
-import shutil
 import subprocess
 
 # ─────────────────────────────────────────────
-# iCloud 경로 자동 감지
+# iCloud Drive 공유용 경로 (계정 달라도 공유 가능)
 # ─────────────────────────────────────────────
-ICLOUD_OBSIDIAN = pathlib.Path.home() / "Library/Mobile Documents/iCloud~md~obsidian/Documents"
-LOCAL_FALLBACK  = pathlib.Path.home() / "Desktop"
+ICLOUD_DRIVE = pathlib.Path.home() / "Library/Mobile Documents/com~apple~CloudDocs"
+LOCAL_FALLBACK = pathlib.Path.home() / "Desktop"
 
 
 def detect_output_dir():
-    if ICLOUD_OBSIDIAN.exists():
-        return ICLOUD_OBSIDIAN
-    # iCloud Obsidian 앱 폴더가 없으면 일반 iCloud Drive 시도
-    icloud_generic = pathlib.Path.home() / "Library/Mobile Documents/com~apple~CloudDocs/Obsidian"
-    if (pathlib.Path.home() / "Library/Mobile Documents/com~apple~CloudDocs").exists():
-        icloud_generic.mkdir(parents=True, exist_ok=True)
-        return icloud_generic
+    # iCloud Drive가 있으면 공유 전용 폴더에 저장
+    if ICLOUD_DRIVE.exists():
+        share_dir = ICLOUD_DRIVE / "영어볼트_공유"
+        share_dir.mkdir(parents=True, exist_ok=True)
+        return share_dir
     return LOCAL_FALLBACK
 
 
@@ -521,27 +517,52 @@ def main():
     build_vault(hajin_path, HAJIN_WORDS, HAJIN_ETYMOLOGIES, HAJIN_SENTENCES, make_hajin_home())
     print(f"   ✅ 완료: {hajin_path}")
 
-    print()
-    print("=" * 50)
-    print("  아이패드 연동 방법")
-    print("=" * 50)
-    print("""
-1. 아이패드 앱스토어에서 'Obsidian' 설치
-2. Obsidian 실행
-3. "Open folder as vault" 선택
-4. iCloud Drive → Obsidian 폴더 안에서
-   '하온_영어볼트' 또는 '하진_영어볼트' 선택
-5. Allow 탭 → 완료!
+    is_icloud = (out_dir != LOCAL_FALLBACK)
 
-⚠️  볼트가 iCloud에 안 보일 경우:
-   아이패드 설정 → [내 이름] → iCloud → Obsidian 동기화 ON
+    print()
+    print("=" * 55)
+    print("  ✅ 다음 단계: iCloud 공유 폴더로 아이패드 연동")
+    print("=" * 55)
+
+    if is_icloud:
+        print(f"""
+【맥북】 폴더 공유 설정 (지금 자동으로 Finder를 열어드립니다)
+
+  ① '하온_영어볼트' 폴더 우클릭
+     → 공유 → "공유 폴더 추가..."
+     → 하온이 Apple ID(이메일) 입력 → 초대
+
+  ② '하진_영어볼트' 폴더 우클릭
+     → 공유 → "공유 폴더 추가..."
+     → 하진이 Apple ID(이메일) 입력 → 초대
+
+【아이패드 - 하온/하진 각자】
+
+  ① 앱스토어 → 'Obsidian' 설치
+  ② 이메일로 온 iCloud 공유 초대 수락
+  ③ Obsidian 실행 → "Open folder as vault"
+  ④ Files(파일) 앱 → iCloud Drive → 공유된 볼트 폴더 선택
+  ⑤ Allow(허용) 탭 → 완료!
+
+⚠️  Finder에서 '공유 폴더 추가' 항목이 안 보이면:
+   Finder 메뉴 → 파일 → iCloud Drive 공유 기능 확인
+   (macOS Ventura 13 이상 필요)
+""")
+    else:
+        print(f"""
+⚠️  iCloud Drive를 찾지 못했습니다.
+    생성된 볼트 위치: {out_dir}
+
+    맥북에서 iCloud Drive가 활성화되어 있는지 확인하세요:
+    시스템 설정 → [내 이름] → iCloud → iCloud Drive ON
+    이후 스크립트를 다시 실행하면 자동으로 iCloud에 저장됩니다.
 """)
 
-    # Finder에서 저장 위치 열기 (맥북에서 실행 시)
+    # Finder에서 저장 위치 자동으로 열기
     if sys.platform == "darwin":
         try:
             subprocess.run(["open", str(out_dir)], check=True)
-            print(f"📂 Finder에서 저장 위치를 열었습니다.")
+            print(f"📂 Finder에서 '{out_dir.name}' 폴더를 열었습니다.")
         except Exception:
             pass
 
