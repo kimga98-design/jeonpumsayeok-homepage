@@ -1,30 +1,33 @@
 #!/usr/bin/env python3
 """
 하온 + 하진 영어 볼트 생성 스크립트 (맥북 실행용)
-iCloud Drive 공유 폴더를 통해 계정이 달라도 아이패드에서 사용 가능
 
 실행 방법:
   python3 setup_all.py
 
-생성 위치:
-  iCloud Drive / 영어볼트_공유 / 하온_영어볼트
-  iCloud Drive / 영어볼트_공유 / 하진_영어볼트
+저장 위치 우선순위:
+  1. 옵시디언 iCloud 동기화 폴더  ← 이미 볼트를 만들어둔 경우 여기에 채워짐
+  2. iCloud Drive / 영어볼트_공유  ← 폴더 공유로 계정이 달라도 접근 가능
+  3. Desktop (iCloud 없을 때)
 """
 
-import os
 import sys
 import pathlib
 import subprocess
 
 # ─────────────────────────────────────────────
-# iCloud Drive 공유용 경로 (계정 달라도 공유 가능)
+# 경로 우선순위
 # ─────────────────────────────────────────────
-ICLOUD_DRIVE = pathlib.Path.home() / "Library/Mobile Documents/com~apple~CloudDocs"
-LOCAL_FALLBACK = pathlib.Path.home() / "Desktop"
+# 1순위: 옵시디언 앱 iCloud 동기화 폴더 (아이패드 자동 연동)
+ICLOUD_OBSIDIAN = pathlib.Path.home() / "Library/Mobile Documents/iCloud~md~obsidian/Documents"
+# 2순위: 일반 iCloud Drive (폴더 공유로 다른 계정 접근)
+ICLOUD_DRIVE    = pathlib.Path.home() / "Library/Mobile Documents/com~apple~CloudDocs"
+LOCAL_FALLBACK  = pathlib.Path.home() / "Desktop"
 
 
 def detect_output_dir():
-    # iCloud Drive가 있으면 공유 전용 폴더에 저장
+    if ICLOUD_OBSIDIAN.exists():
+        return ICLOUD_OBSIDIAN          # 이미 볼트가 있는 폴더에 바로 생성
     if ICLOUD_DRIVE.exists():
         share_dir = ICLOUD_DRIVE / "영어볼트_공유"
         share_dir.mkdir(parents=True, exist_ok=True)
