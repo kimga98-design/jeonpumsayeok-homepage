@@ -46,7 +46,6 @@ def wrap_md(title: str, text: str) -> str:
     return f"""---
 date: {today}
 source: import
-tags: [원자료]
 ---
 
 # {title}
