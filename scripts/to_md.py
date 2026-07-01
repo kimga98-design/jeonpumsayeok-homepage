@@ -192,11 +192,6 @@ def convert_local(path: Path, output_dir: Path, timeout: int = 60, skip_existing
         print(f"  건너뜀 (이미 변환됨): {path.name}")
         return
 
-    size_mb = path.stat().st_size / (1024 * 1024)
-    if size_mb > 50:
-        print(f"  건너뜀 (50MB 초과 {size_mb:.0f}MB): {path.name}")
-        return
-
     def _timeout(signum, frame):
         raise TimeoutError()
 
