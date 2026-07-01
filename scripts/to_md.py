@@ -196,6 +196,14 @@ EXTRACTORS = {
 }
 
 
+SKIPPED_LOG = Path(__file__).parent / ".skipped.txt"
+
+
+def log_skipped(path: Path):
+    with open(SKIPPED_LOG, "a", encoding="utf-8") as f:
+        f.write(str(path) + "\n")
+
+
 def convert_local(path: Path, output_dir: Path, timeout: int = 60, skip_existing: bool = True):
     import threading
 
@@ -227,9 +235,11 @@ def convert_local(path: Path, output_dir: Path, timeout: int = 60, skip_existing
 
     if t.is_alive():
         print(f"  건너뜀 (60초 초과): {path.name}")
+        log_skipped(path)
         return
     if error[0]:
         print(f"  건너뜀 (오류): {path.name} — {error[0]}")
+        log_skipped(path)
         return
 
     md = wrap_md(path.stem, result[0])
@@ -435,9 +445,30 @@ def main():
     parser.add_argument("--drive", metavar="ID_OR_URL", help="Google Drive 파일 ID 또는 URL")
     parser.add_argument("--drive-folder", metavar="FOLDER_ID", help="Google Drive 특정 폴더 ID")
     parser.add_argument("--drive-all", action="store_true", help="Google Drive 전체 파일 변환")
+    parser.add_argument("--retry", action="store_true", help="이전에 건너뛴 파일 재시도 (타임아웃 2배)")
     args = parser.parse_args()
 
     output_dir = Path(args.output) if args.output else None
+
+    # 건너뛴 파일 재시도 모드
+    if args.retry:
+        if not SKIPPED_LOG.exists():
+            print("건너뛴 파일 기록이 없습니다.")
+            return
+        files = [Path(p.strip()) for p in SKIPPED_LOG.read_text().splitlines() if p.strip()]
+        if not files:
+            print("재시도할 파일이 없습니다.")
+            return
+        out = output_dir or Path(".")
+        print(f"재시도: {len(files)}개 파일 (타임아웃 120초)")
+        SKIPPED_LOG.unlink()
+        for f in files:
+            if f.exists():
+                convert_local(f, out, timeout=120, skip_existing=False)
+            else:
+                print(f"  파일 없음: {f}")
+        print("완료.")
+        return
 
     # Google Drive 전체 모드
     if args.drive_all:
