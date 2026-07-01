@@ -135,6 +135,32 @@ def from_html(path: Path) -> str:
     return soup.get_text(separator="\n")
 
 
+def from_hwpx(path: Path) -> str:
+    import zipfile
+    import xml.etree.ElementTree as ET
+
+    texts = []
+    with zipfile.ZipFile(path, "r") as z:
+        # 섹션 파일 정렬 추출 (section0.xml, section1.xml ...)
+        section_files = sorted(
+            [f for f in z.namelist() if re.match(r"Contents/section\d+\.xml", f)]
+        )
+        if not section_files:
+            # 일부 HWPX는 경로가 다를 수 있음
+            section_files = sorted(
+                [f for f in z.namelist() if f.endswith(".xml") and "section" in f.lower()]
+            )
+        for sf in section_files:
+            xml_bytes = z.read(sf)
+            root = ET.fromstring(xml_bytes)
+            # 한글 XML 네임스페이스 내 hp:t 태그에서 텍스트 추출
+            for elem in root.iter():
+                if elem.tag.endswith("}t") or elem.tag == "t":
+                    if elem.text and elem.text.strip():
+                        texts.append(elem.text.strip())
+    return "\n\n".join(texts)
+
+
 EXTRACTORS = {
     ".pdf":  from_pdf,
     ".docx": from_docx,
@@ -147,6 +173,8 @@ EXTRACTORS = {
     ".md":   from_txt,
     ".html": from_html,
     ".htm":  from_html,
+    ".hwpx": from_hwpx,
+    ".hwpz": from_hwpx,
 }
 
 
