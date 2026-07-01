@@ -285,21 +285,99 @@ def convert_drive_file(service, file_id: str, output_dir: Path):
     tmp.unlink(missing_ok=True)
 
 
-def convert_drive_folder(service, folder_id: str, output_dir: Path):
-    results = service.files().list(
-        q=f"'{folder_id}' in parents and trashed=false",
-        fields="files(id,name,mimeType)",
-        pageSize=200,
-    ).execute()
-    files = results.get("files", [])
-    if not files:
-        print("폴더가 비어있습니다.")
-        return
-    for f in files:
+def convert_drive_folder(service, folder_id: str, output_dir: Path,
+                         history: set = None, recursive: bool = True):
+    """폴더 내 파일 변환. recursive=True면 하위 폴더도 처리."""
+    if history is None:
+        history = set()
+
+    supported_mimes = set(GDRIVE_EXPORT_MIME) | set(GDRIVE_DOWNLOAD_MIME)
+    query = f"'{folder_id}' in parents and trashed=false"
+    page_token = None
+
+    while True:
+        resp = service.files().list(
+            q=query,
+            fields="nextPageToken, files(id,name,mimeType)",
+            pageSize=200,
+            pageToken=page_token,
+        ).execute()
+
+        for f in resp.get("files", []):
+            if f["mimeType"] == "application/vnd.google-apps.folder":
+                if recursive:
+                    sub_dir = output_dir / _safe_name(f["name"])
+                    convert_drive_folder(service, f["id"], sub_dir, history, recursive)
+            elif f["mimeType"] in supported_mimes:
+                if f["id"] in history:
+                    print(f"  건너뜀 (이미 변환됨): {f['name']}")
+                    continue
+                try:
+                    convert_drive_file(service, f["id"], output_dir)
+                    history.add(f["id"])
+                except Exception as e:
+                    print(f"  오류 ({f['name']}): {e}")
+
+        page_token = resp.get("nextPageToken")
+        if not page_token:
+            break
+
+
+def convert_drive_all(service, output_dir: Path):
+    """Google Drive 전체 파일 변환 (이력 관리로 중복 방지)."""
+    import json
+
+    history_file = Path(__file__).parent / ".drive_history.json"
+    history: set = set()
+    if history_file.exists():
         try:
-            convert_drive_file(service, f["id"], output_dir)
-        except Exception as e:
-            print(f"  오류 ({f['name']}): {e}")
+            history = set(json.loads(history_file.read_text()))
+        except Exception:
+            pass
+
+    supported_mimes = set(GDRIVE_EXPORT_MIME) | set(GDRIVE_DOWNLOAD_MIME)
+    mime_filter = " or ".join(f"mimeType='{m}'" for m in supported_mimes)
+    query = f"trashed=false and ({mime_filter})"
+
+    page_token = None
+    total = 0
+    skipped = 0
+
+    print("Google Drive 전체 파일 목록 수집 중...")
+
+    while True:
+        resp = service.files().list(
+            q=query,
+            fields="nextPageToken, files(id,name,mimeType,parents)",
+            pageSize=200,
+            pageToken=page_token,
+        ).execute()
+
+        files = resp.get("files", [])
+        for f in files:
+            total += 1
+            if f["id"] in history:
+                skipped += 1
+                continue
+            try:
+                convert_drive_file(service, f["id"], output_dir)
+                history.add(f["id"])
+            except Exception as e:
+                print(f"  오류 ({f['name']}): {e}")
+
+        # 중간 저장 (중단돼도 이력 유지)
+        history_file.write_text(json.dumps(list(history)))
+
+        page_token = resp.get("nextPageToken")
+        if not page_token:
+            break
+
+    print(f"\n전체: {total}개 | 신규 변환: {total - skipped}개 | 건너뜀: {skipped}개")
+    history_file.write_text(json.dumps(list(history)))
+
+
+def _safe_name(name: str) -> str:
+    return re.sub(r'[<>:"/\\|?*]', '_', name)
 
 
 # ─── 메인 ─────────────────────────────────────────────────────────────────────
@@ -310,12 +388,21 @@ def main():
     parser.add_argument("input", nargs="?", help="로컬 파일/폴더 또는 Google Drive URL/ID")
     parser.add_argument("-o", "--output", default=None, help="출력 폴더")
     parser.add_argument("--drive", metavar="ID_OR_URL", help="Google Drive 파일 ID 또는 URL")
-    parser.add_argument("--drive-folder", metavar="FOLDER_ID", help="Google Drive 폴더 ID")
+    parser.add_argument("--drive-folder", metavar="FOLDER_ID", help="Google Drive 특정 폴더 ID")
+    parser.add_argument("--drive-all", action="store_true", help="Google Drive 전체 파일 변환")
     args = parser.parse_args()
 
     output_dir = Path(args.output) if args.output else None
 
-    # Google Drive 모드
+    # Google Drive 전체 모드
+    if args.drive_all:
+        service = get_drive_service()
+        out = output_dir or Path(".")
+        convert_drive_all(service, out)
+        print("완료.")
+        return
+
+    # Google Drive 단일/폴더 모드
     if args.drive or args.drive_folder:
         service = get_drive_service()
         out = output_dir or Path(".")
