@@ -914,6 +914,10 @@
       <p style="margin-top: 2.4em; padding-top: 1.6em; border-top: 1px solid rgba(196,168,98,.3); color: var(--gold-light); font-weight: 600; letter-spacing: .04em;">
         온누리교회 회복사역본부
       </p>
+      <div style="margin-top: 2em; display:flex; gap:12px; flex-wrap:wrap;">
+        <button onclick="openAboutModal()" style="background:rgba(196,168,98,.15); border:1px solid rgba(196,168,98,.4); color:var(--gold-light); border-radius:8px; padding:10px 22px; font-size:13px; font-weight:600; cursor:pointer; transition:background .15s;" onmouseover="this.style.background='rgba(196,168,98,.25)'" onmouseout="this.style.background='rgba(196,168,98,.15)'">📄 정품사역 소개 전문 보기 →</button>
+        <a href="#about" style="display:inline-flex; align-items:center; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); color:rgba(240,237,230,.75); border-radius:8px; padding:10px 22px; font-size:13px; font-weight:600; text-decoration:none; transition:background .15s;" onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">사역소개 바로가기 →</a>
+      </div>
     </div>
   </div>
 </section>
@@ -955,18 +959,21 @@
           <div class="tier-num">STEP 1</div>
           <div class="tier-name">순장 및 공동체 리더십</div>
           <div class="tier-role">가장 가까이에서 성도의 어려움을 감지하고 경청합니다</div>
+          <a href="#guide" style="display:inline-block; margin-top:14px; font-size:11.5px; color:var(--gold-light); font-weight:600; text-decoration:none; opacity:.9;">돌봄가이드 보기 →</a>
           <div class="tier-arrow">›</div>
         </div>
         <div class="tier-item">
           <div class="tier-num">STEP 2</div>
           <div class="tier-name">공동체 정품사역자</div>
           <div class="tier-role">순장과 협력하여 적절한 회복 자원으로 연결합니다</div>
+          <a href="#apply" style="display:inline-block; margin-top:14px; font-size:11.5px; color:var(--gold-light); font-weight:600; text-decoration:none; opacity:.9;">상담 신청하기 →</a>
           <div class="tier-arrow">›</div>
         </div>
         <div class="tier-item">
           <div class="tier-num">STEP 3</div>
           <div class="tier-name">정품사역팀</div>
           <div class="tier-role">교육, 자문, 사례관리, 전문기관 네트워크를 운영합니다</div>
+          <a href="#emergency" style="display:inline-block; margin-top:14px; font-size:11.5px; color:var(--gold-light); font-weight:600; text-decoration:none; opacity:.9;">위급연락망 보기 →</a>
         </div>
       </div>
     </div>
@@ -1201,6 +1208,10 @@
         <li>갑자기 연락이 두절되고 혼자 고립될 때</li>
       </ul>
       <p style="margin-top:16px; font-size:12.5px; color:var(--text-mid);">위 상황을 발견하면 즉시 담당 정품사역자 또는 팀장에게 연락하십시오.</p>
+      <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+        <a href="#emergency" style="display:inline-block; background:var(--green-deep); color:var(--cream); font-size:13px; font-weight:700; padding:10px 20px; border-radius:8px; text-decoration:none;">🚨 위급연락망 전체 보기 →</a>
+        <a href="#apply" style="display:inline-block; background:var(--gold); color:var(--green-deep); font-size:13px; font-weight:700; padding:10px 20px; border-radius:8px; text-decoration:none;">📝 상담 신청하기 →</a>
+      </div>
     </div>
   </div>
 </section>
@@ -1450,6 +1461,7 @@ const DISEASES = {
     ],
     긴급: ['자신이나 타인을 해칠 것 같다는 언급 또는 행동', '약물 복용을 갑자기 중단함', '기본 식사·수면 등 자기돌봄이 완전히 무너짐'],
     연락처: ['119', '정신건강위기상담 1577-0199'],
+    관련질환: ['양극성장애', 'PTSD', '자해자살'],
   },
   양극성장애: {
     emoji: '🌊',
@@ -1464,6 +1476,7 @@ const DISEASES = {
     ],
     긴급: ['자해·자살 언급이 있을 때 (우울 국면에서 위험)', '타인에게 위협적인 행동을 보일 때 (조증 극기)', '약물 복용을 갑자기 중단했을 때'],
     연락처: ['119', '정신건강위기상담 1577-0199'],
+    관련질환: ['조현병', '우울장애', '자해자살'],
   },
   우울장애: {
     emoji: '🌧',
@@ -1478,6 +1491,7 @@ const DISEASES = {
     ],
     긴급: ['"죽고 싶다", "살고 싶지 않다"는 언급이 있을 때', '자살 방법이나 시기를 구체적으로 언급할 때', '자해 흔적 발견 시'],
     연락처: ['119', '자살예방상담 1393', '정신건강위기상담 1577-0199'],
+    관련질환: ['공황장애', 'PTSD', '자해자살'],
   },
   공황장애: {
     emoji: '⚡',
@@ -1492,6 +1506,7 @@ const DISEASES = {
     ],
     긴급: ['공황발작 중 의식을 잃거나 쓰러질 때 → 119', '발작 후 자살·자해 언급이 있을 때'],
     연락처: ['119', '정신건강위기상담 1577-0199'],
+    관련질환: ['우울장애', '강박장애', 'PTSD'],
   },
   강박장애: {
     emoji: '🔄',
@@ -1506,6 +1521,7 @@ const DISEASES = {
     ],
     긴급: ['강박 의식을 수행하지 못해 자해하거나 타인을 위협할 때', '강박으로 인해 식사·수면 등 기본 생활이 불가능해질 때', '우울감이 심해지고 자살 언급이 있을 때'],
     연락처: ['119', '정신건강위기상담 1577-0199'],
+    관련질환: ['공황장애', '우울장애', 'PTSD'],
   },
   ADHD: {
     emoji: '🎯',
@@ -1520,6 +1536,7 @@ const DISEASES = {
     ],
     긴급: ['심각한 자해·공격 행동이 있을 때', '동반 우울·불안이 심각하게 악화될 때'],
     연락처: ['119', '정신건강위기상담 1577-0199'],
+    관련질환: ['우울장애', '공황장애'],
   },
   PTSD: {
     emoji: '🌪',
@@ -1534,6 +1551,7 @@ const DISEASES = {
     ],
     긴급: ['자해·자살 충동이 동반될 때', '해리 증상(자신이 몸에서 분리된 느낌)이 심각할 때', '극심한 공황 상태로 일상생활이 완전히 불가능할 때'],
     연락처: ['119', '자살예방상담 1393', '정신건강위기상담 1577-0199'],
+    관련질환: ['우울장애', '공황장애', '자해자살'],
   },
   자해자살: {
     emoji: '🆘',
@@ -1548,6 +1566,7 @@ const DISEASES = {
     ],
     긴급: ['자해 흔적 또는 위험 물건(칼, 약물 과다 등) 발견 시', '구체적인 자살 계획(방법, 시기)을 언급할 때', '갑자기 소중한 물건을 나눠주거나 작별인사 행동'],
     연락처: ['119 (즉각 응급)', '자살예방상담 1393 (24시간)', '정신건강위기상담 1577-0199 (24시간)'],
+    관련질환: ['우울장애', 'PTSD', '양극성장애'],
   },
 };
 
@@ -1557,8 +1576,18 @@ function openModal(key) {
   document.getElementById('modalEmoji').textContent = d.emoji;
   document.getElementById('modalTitle').textContent = d.title;
 
-  // 탭 0: 질환이해
-  document.getElementById('panel0').innerHTML = d.이해 +
+  // 탭 0: 질환이해 + 관련질환 교차링크
+  const relatedHTML = d.관련질환 && d.관련질환.length
+    ? '<div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--cream-dark);">' +
+      '<p style="font-size:11px; font-weight:700; color:var(--green-light); letter-spacing:.1em; text-transform:uppercase; margin-bottom:10px;">관련 질환 바로보기</p>' +
+      '<div style="display:flex; gap:8px; flex-wrap:wrap;">' +
+      d.관련질환.map(k => {
+        const rel = DISEASES[k];
+        return rel ? `<button onclick="openModal('${k}')" style="background:var(--cream-dark); border:1px solid #ddd; border-radius:20px; padding:6px 14px; font-size:12.5px; font-weight:600; color:var(--green-deep); cursor:pointer; display:flex; align-items:center; gap:5px; transition:background .15s;" onmouseover="this.style.background='#e0e8d6'" onmouseout="this.style.background='var(--cream-dark)'">${rel.emoji} ${rel.title}</button>` : '';
+      }).join('') +
+      '</div></div>'
+    : '';
+  document.getElementById('panel0').innerHTML = d.이해 + relatedHTML +
     '<div class="modal-disclaimer">⚠️ 이 내용은 미국정신의학회 DSM-5-TR을 참고하여 교육 목적으로 자체 재구성한 자료입니다. 진단 및 치료 목적으로 사용하지 마십시오.</div>';
 
   // 탭 1: 관찰신호
@@ -1574,7 +1603,7 @@ function openModal(key) {
       `<div class="modal-care-item"><div class="modal-care-title">${c.제목}</div><div class="modal-care-body">${c.내용}</div></div>`
     ).join('');
 
-  // 탭 3: 즉각연락
+  // 탭 3: 즉각연락 + 행동 CTA
   document.getElementById('panel3').innerHTML =
     '<div class="modal-urgent-box"><h4>즉각 연락이 필요한 상황</h4>' +
     '<ul class="modal-urgent-list">' +
@@ -1583,7 +1612,11 @@ function openModal(key) {
     '<div class="modal-hotline">' +
     d.연락처.map(c => `<span class="modal-hotline-chip">📞 ${c}</span>`).join('') +
     '</div></div>' +
-    '<p style="margin-top:16px; font-size:13px; color:var(--text-mid);">위 상황을 발견하면 즉시 <strong>담당 정품사역자 또는 교역자</strong>에게 연락하십시오.</p>';
+    '<p style="margin-top:16px; font-size:13px; color:var(--text-mid);">위 상황을 발견하면 즉시 <strong>담당 정품사역자 또는 교역자</strong>에게 연락하십시오.</p>' +
+    '<div style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;">' +
+    '<button onclick="closeModal(); document.getElementById(\'apply\').scrollIntoView({behavior:\'smooth\'});" style="flex:1; min-width:140px; background:var(--gold); color:var(--green-deep); border:none; border-radius:8px; padding:12px 18px; font-size:13.5px; font-weight:700; cursor:pointer; transition:background .15s;" onmouseover="this.style.background=\'var(--gold-light)\'" onmouseout="this.style.background=\'var(--gold)\'">📝 상담 신청하기 →</button>' +
+    '<button onclick="closeModal(); document.getElementById(\'emergency\').scrollIntoView({behavior:\'smooth\'});" style="flex:1; min-width:140px; background:var(--green-deep); color:var(--cream); border:none; border-radius:8px; padding:12px 18px; font-size:13.5px; font-weight:700; cursor:pointer; transition:background .15s;" onmouseover="this.style.background=\'var(--green-mid)\'" onmouseout="this.style.background=\'var(--green-deep)\'">🚨 위급연락망 보기 →</button>' +
+    '</div>';
 
   // 탭 초기화
   document.querySelectorAll('.modal-tab').forEach((t, i) => t.classList.toggle('active', i === 0));
@@ -1630,6 +1663,11 @@ function runChecklist() {
   let score = 0;
   checks.forEach(c => { if (c.checked) score += parseInt(c.dataset.score); });
 
+  // 영역별 체크 여부 파악
+  const sections = document.querySelectorAll('.cl-section');
+  const checkedInSection = Array.from(sections).map(s => s.querySelectorAll('.cl-check:checked').length > 0);
+  // [0]=기분/감정, [1]=불안/긴장, [2]=신체생활, [3]=관계, [4]=위험신호
+
   const result = document.getElementById('cl-result');
   const icon = document.getElementById('cl-result-icon');
   const level = document.getElementById('cl-result-level');
@@ -1639,40 +1677,66 @@ function runChecklist() {
   result.style.display = 'block';
   btn.style.display = 'none';
 
+  // 관련 질환 추천 로직
+  let suggestedDiseases = [];
+  if (checkedInSection[4]) suggestedDiseases = ['자해자살'];
+  else {
+    if (checkedInSection[0]) suggestedDiseases.push('우울장애', '양극성장애');
+    if (checkedInSection[1]) suggestedDiseases.push('공황장애', '강박장애');
+    if (checkedInSection[2] && checkedInSection[0]) suggestedDiseases.push('우울장애');
+    if (checkedInSection[3]) suggestedDiseases.push('PTSD');
+    suggestedDiseases = [...new Set(suggestedDiseases)].slice(0, 3);
+  }
+
+  const suggestHTML = suggestedDiseases.length
+    ? '<div style="margin-top:16px; text-align:left;">' +
+      '<p style="font-size:11.5px; color:#666; margin-bottom:8px; font-weight:600;">관련 질환 가이드 확인하기</p>' +
+      '<div style="display:flex; gap:8px; flex-wrap:wrap;">' +
+      suggestedDiseases.map(k => {
+        const d = DISEASES[k];
+        return d ? `<button onclick="closeChecklist(); openModal('${k}');" style="background:#f0f7f0; border:1px solid #c8ddc0; border-radius:20px; padding:6px 14px; font-size:12px; font-weight:600; color:var(--green-deep); cursor:pointer;">${d.emoji} ${d.title}</button>` : '';
+      }).join('') +
+      '</div></div>'
+    : '';
+
   if (score === 0) {
     result.style.background = '#f0f7f0';
     icon.textContent = '✅';
     level.textContent = '현재 특별한 관심이 필요하지 않습니다';
     level.style.color = '#2a6a2a';
-    desc.textContent = '체크된 항목이 없습니다. 지속적인 관심과 기도로 공동체를 섬겨 주십시오.';
+    desc.innerHTML = '체크된 항목이 없습니다. 지속적인 관심과 기도로 공동체를 섬겨 주십시오.<br><a href="#guide" onclick="closeChecklist();" style="font-size:12.5px; color:var(--green-light); font-weight:600; display:inline-block; margin-top:8px;">📚 돌봄가이드 전체 보기 →</a>';
   } else if (score >= 3 && document.querySelectorAll('.cl-check[data-score="3"]:checked').length > 0) {
     result.style.background = '#fff0f4';
     icon.textContent = '🚨';
     level.textContent = '즉각 연락이 필요합니다';
     level.style.color = '#c0005a';
-    desc.textContent = '위험신호가 감지되었습니다. 지금 바로 담당 정품사역자 또는 팀장에게 연락하십시오. 혼자 감당하지 마십시오.';
+    desc.innerHTML = '위험신호가 감지되었습니다. 지금 바로 담당 정품사역자 또는 팀장에게 연락하십시오. 혼자 감당하지 마십시오.' + suggestHTML;
     btn.style.display = 'inline-block';
     btn.style.background = '#c0005a';
+    btn.onclick = function() { closeChecklist(); document.getElementById('emergency').scrollIntoView({behavior:'smooth'}); };
+    btn.textContent = '🚨 위급연락망 바로가기 →';
   } else if (score >= 5) {
     result.style.background = '#fff8e1';
     icon.textContent = '⚠️';
     level.textContent = '전문 상담 연결을 권장합니다';
     level.style.color = '#7a5c00';
-    desc.textContent = '여러 영역에서 어려움의 신호가 관찰됩니다. 정품사역 상담을 통해 적절한 도움으로 연결해 드릴 수 있습니다.';
+    desc.innerHTML = '여러 영역에서 어려움의 신호가 관찰됩니다. 정품사역 상담을 통해 적절한 도움으로 연결해 드릴 수 있습니다.' + suggestHTML;
     btn.style.display = 'inline-block';
     btn.style.background = 'var(--green-deep)';
+    btn.onclick = function() { closeChecklist(); document.getElementById('apply').scrollIntoView({behavior:'smooth'}); };
+    btn.textContent = '📝 상담 신청하기 →';
   } else if (score >= 2) {
     result.style.background = '#f5f8ff';
     icon.textContent = '👀';
     level.textContent = '지속적인 관심과 관찰이 필요합니다';
     level.style.color = '#2a4a8a';
-    desc.textContent = '일부 신호가 감지됩니다. 지속적으로 관심을 기울이며 기도해 주시고, 변화가 있으면 정품사역자와 나눠 주십시오.';
+    desc.innerHTML = '일부 신호가 감지됩니다. 지속적으로 관심을 기울이며 기도해 주시고, 변화가 있으면 정품사역자와 나눠 주십시오.' + suggestHTML;
   } else {
     result.style.background = '#f5f8ff';
     icon.textContent = '💛';
     level.textContent = '관심 어린 돌봄을 유지해 주십시오';
     level.style.color = '#2a4a8a';
-    desc.textContent = '경미한 신호가 관찰됩니다. 따뜻한 관심과 기도로 함께해 주시고, 상황 변화를 주의 깊게 살펴봐 주십시오.';
+    desc.innerHTML = '경미한 신호가 관찰됩니다. 따뜻한 관심과 기도로 함께해 주시고, 상황 변화를 주의 깊게 살펴봐 주십시오.' + suggestHTML;
   }
   result.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
@@ -1900,6 +1964,8 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
         <li><a href="#guide">돌봄가이드</a></li>
         <li><a href="#apply">상담신청</a></li>
         <li><a href="#board">게시판</a></li>
+        <li><a href="#emergency">위급연락망</a></li>
+        <li><a href="#team">섬기는 사람들</a></li>
       </ul>
     </div>
     <div class="footer-col">
