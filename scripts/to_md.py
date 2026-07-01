@@ -82,6 +82,25 @@ def from_docx(path: Path) -> str:
     return "\n\n".join(p.text.strip() for p in doc.paragraphs if p.text.strip())
 
 
+def from_doc(path: Path) -> str:
+    import subprocess
+    # macOS 내장 textutil 사용 (설치 불필요)
+    result = subprocess.run(
+        ["textutil", "-convert", "txt", "-stdout", str(path)],
+        capture_output=True, text=True, encoding="utf-8", errors="ignore"
+    )
+    if result.returncode == 0 and result.stdout.strip():
+        return result.stdout
+    # fallback: antiword
+    result2 = subprocess.run(
+        ["antiword", str(path)],
+        capture_output=True, text=True, encoding="utf-8", errors="ignore"
+    )
+    if result2.returncode == 0 and result2.stdout.strip():
+        return result2.stdout
+    raise RuntimeError(f".doc 변환 실패: {result.stderr or result2.stderr}")
+
+
 def from_pptx(path: Path) -> str:
     try:
         from pptx import Presentation
@@ -181,7 +200,7 @@ def from_hwpx(path: Path) -> str:
 EXTRACTORS = {
     ".pdf":  from_pdf,
     ".docx": from_docx,
-    ".doc":  from_docx,
+    ".doc":  from_doc,
     ".pptx": from_pptx,
     ".ppt":  from_pptx,
     ".xlsx": from_xlsx,
