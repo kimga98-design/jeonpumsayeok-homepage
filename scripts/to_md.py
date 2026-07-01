@@ -178,14 +178,33 @@ EXTRACTORS = {
 }
 
 
-def convert_local(path: Path, output_dir: Path):
+def convert_local(path: Path, output_dir: Path, timeout: int = 60):
+    import signal
+
     ext = path.suffix.lower()
     extractor = EXTRACTORS.get(ext)
     if not extractor:
         print(f"  건너뜀 (미지원 형식): {path.name}")
         return
+
+    def _timeout(signum, frame):
+        raise TimeoutError()
+
     print(f"변환 중: {path.name}")
-    text = clean(extractor(path))
+    signal.signal(signal.SIGALRM, _timeout)
+    signal.alarm(timeout)
+    try:
+        text = clean(extractor(path))
+        signal.alarm(0)
+    except TimeoutError:
+        signal.alarm(0)
+        print(f"  건너뜀 (60초 초과): {path.name}")
+        return
+    except Exception as e:
+        signal.alarm(0)
+        print(f"  건너뜀 (오류): {path.name} — {e}")
+        return
+
     md = wrap_md(path.stem, text)
     output_dir.mkdir(parents=True, exist_ok=True)
     out = output_dir / (path.stem + ".md")
