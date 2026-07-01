@@ -178,13 +178,18 @@ EXTRACTORS = {
 }
 
 
-def convert_local(path: Path, output_dir: Path, timeout: int = 60):
+def convert_local(path: Path, output_dir: Path, timeout: int = 60, skip_existing: bool = True):
     import signal
 
     ext = path.suffix.lower()
     extractor = EXTRACTORS.get(ext)
     if not extractor:
         print(f"  건너뜀 (미지원 형식): {path.name}")
+        return
+
+    out = output_dir / (path.stem + ".md")
+    if skip_existing and out.exists():
+        print(f"  건너뜀 (이미 변환됨): {path.name}")
         return
 
     def _timeout(signum, frame):
@@ -207,7 +212,6 @@ def convert_local(path: Path, output_dir: Path, timeout: int = 60):
 
     md = wrap_md(path.stem, text)
     output_dir.mkdir(parents=True, exist_ok=True)
-    out = output_dir / (path.stem + ".md")
     out.write_text(md, encoding="utf-8")
     print(f"  저장: {out}")
 
