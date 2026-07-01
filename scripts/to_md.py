@@ -98,6 +98,24 @@ def from_pptx(path: Path) -> str:
 
 
 def from_xlsx(path: Path) -> str:
+    if path.suffix.lower() == ".xls":
+        try:
+            import xlrd
+            wb = xlrd.open_workbook(path)
+            sheets = []
+            for sheet in wb.sheets():
+                rows = []
+                for i in range(sheet.nrows):
+                    cells = [str(sheet.cell_value(i, j)) for j in range(sheet.ncols)
+                             if str(sheet.cell_value(i, j)).strip()]
+                    if cells:
+                        rows.append("  ".join(cells))
+                if rows:
+                    sheets.append(f"## {sheet.name}\n\n" + "\n".join(rows))
+            return "\n\n".join(sheets)
+        except ImportError:
+            sys.exit("pip3 install --break-system-packages xlrd")
+
     try:
         import openpyxl
     except ImportError:
@@ -179,7 +197,7 @@ EXTRACTORS = {
 
 
 def convert_local(path: Path, output_dir: Path, timeout: int = 60, skip_existing: bool = True):
-    import signal
+    import threading
 
     ext = path.suffix.lower()
     extractor = EXTRACTORS.get(ext)
@@ -192,25 +210,29 @@ def convert_local(path: Path, output_dir: Path, timeout: int = 60, skip_existing
         print(f"  건너뜀 (이미 변환됨): {path.name}")
         return
 
-    def _timeout(signum, frame):
-        raise TimeoutError()
-
     print(f"변환 중: {path.name}")
-    signal.signal(signal.SIGALRM, _timeout)
-    signal.alarm(timeout)
-    try:
-        text = clean(extractor(path))
-        signal.alarm(0)
-    except TimeoutError:
-        signal.alarm(0)
+
+    result = [None]
+    error  = [None]
+
+    def _run():
+        try:
+            result[0] = clean(extractor(path))
+        except Exception as e:
+            error[0] = e
+
+    t = threading.Thread(target=_run, daemon=True)
+    t.start()
+    t.join(timeout)
+
+    if t.is_alive():
         print(f"  건너뜀 (60초 초과): {path.name}")
         return
-    except Exception as e:
-        signal.alarm(0)
-        print(f"  건너뜀 (오류): {path.name} — {e}")
+    if error[0]:
+        print(f"  건너뜀 (오류): {path.name} — {error[0]}")
         return
 
-    md = wrap_md(path.stem, text)
+    md = wrap_md(path.stem, result[0])
     output_dir.mkdir(parents=True, exist_ok=True)
     out.write_text(md, encoding="utf-8")
     print(f"  저장: {out}")
