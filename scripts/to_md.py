@@ -464,6 +464,7 @@ def main():
     parser.add_argument("--drive-folder", metavar="FOLDER_ID", help="Google Drive 특정 폴더 ID")
     parser.add_argument("--drive-all", action="store_true", help="Google Drive 전체 파일 변환")
     parser.add_argument("--retry", action="store_true", help="이전에 건너뛴 파일 재시도 (타임아웃 2배)")
+    parser.add_argument("--timeout", type=int, default=60, metavar="SEC", help="파일당 타임아웃 초 (기본 60)")
     args = parser.parse_args()
 
     output_dir = Path(args.output) if args.output else None
@@ -529,7 +530,7 @@ def main():
             sys.exit("변환할 파일이 없습니다.")
         for f in files:
             out = output_dir or f.parent
-            convert_local(f, out)
+            convert_local(f, out, timeout=args.timeout)
     elif input_path.is_file():
         out = output_dir or input_path.parent
         convert_local(input_path, out)
