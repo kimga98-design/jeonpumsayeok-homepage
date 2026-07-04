@@ -143,7 +143,14 @@ def from_xlsx(path: Path) -> str:
     for sheet in wb.worksheets:
         rows = []
         for row in sheet.iter_rows(values_only=True):
-            cells = [str(c) for c in row if c is not None]
+            cells = []
+            for c in row:
+                if c is None:
+                    continue
+                s = str(c)
+                if s.startswith("#"):  # 엑셀 오류값(#DIV/0! 등) 이스케이프
+                    s = "\\" + s
+                cells.append(s)
             if cells:
                 rows.append("  ".join(cells))
         if rows:
