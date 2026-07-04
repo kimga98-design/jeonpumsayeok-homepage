@@ -222,7 +222,7 @@ def log_skipped(path: Path):
         f.write(str(path) + "\n")
 
 
-def convert_local(path: Path, output_dir: Path, timeout: int = 60, skip_existing: bool = True):
+def convert_local(path: Path, output_dir: Path, timeout: int = 0, skip_existing: bool = True):
     import threading
 
     ext = path.suffix.lower()
@@ -236,7 +236,7 @@ def convert_local(path: Path, output_dir: Path, timeout: int = 60, skip_existing
         print(f"  건너뜀 (이미 변환됨): {path.name}")
         return
 
-    print(f"변환 중: {path.name}")
+    print(f"변환 중: {path.name}", flush=True)
 
     result = [None]
     error  = [None]
@@ -249,10 +249,10 @@ def convert_local(path: Path, output_dir: Path, timeout: int = 60, skip_existing
 
     t = threading.Thread(target=_run, daemon=True)
     t.start()
-    t.join(timeout)
+    t.join(timeout if timeout > 0 else None)  # 0 = 제한 없음
 
     if t.is_alive():
-        print(f"  건너뜀 (60초 초과): {path.name}")
+        print(f"  건너뜀 ({timeout}초 초과): {path.name}")
         log_skipped(path)
         return
     if error[0]:
@@ -263,7 +263,7 @@ def convert_local(path: Path, output_dir: Path, timeout: int = 60, skip_existing
     md = wrap_md(path.stem, result[0])
     output_dir.mkdir(parents=True, exist_ok=True)
     out.write_text(md, encoding="utf-8")
-    print(f"  저장: {out}")
+    print(f"  저장: {out}", flush=True)
 
 
 # ─── Google Drive ─────────────────────────────────────────────────────────────
@@ -464,7 +464,7 @@ def main():
     parser.add_argument("--drive-folder", metavar="FOLDER_ID", help="Google Drive 특정 폴더 ID")
     parser.add_argument("--drive-all", action="store_true", help="Google Drive 전체 파일 변환")
     parser.add_argument("--retry", action="store_true", help="이전에 건너뛴 파일 재시도 (타임아웃 2배)")
-    parser.add_argument("--timeout", type=int, default=60, metavar="SEC", help="파일당 타임아웃 초 (기본 60)")
+    parser.add_argument("--timeout", type=int, default=0, metavar="SEC", help="파일당 타임아웃 초 (기본 0=제한없음)")
     args = parser.parse_args()
 
     output_dir = Path(args.output) if args.output else None
