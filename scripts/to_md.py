@@ -37,8 +37,14 @@ from datetime import date
 def clean(text: str) -> str:
     text = re.sub(r'\r\n', '\n', text)
     text = re.sub(r'\n{3,}', '\n\n', text)
-    text = "\n".join(line.rstrip() for line in text.splitlines())
-    return text.strip()
+    lines = []
+    for line in text.splitlines():
+        line = line.rstrip()
+        if not line.startswith('#'):
+            # 줄 중간의 #태그 이스케이프 (Obsidian 태그로 인식되는 것 방지)
+            line = re.sub(r'#(\S)', r'\\#\1', line)
+        lines.append(line)
+    return "\n".join(lines).strip()
 
 
 def wrap_md(title: str, text: str) -> str:
