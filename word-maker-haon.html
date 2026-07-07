@@ -82,6 +82,16 @@
     .ant { background: rgba(248,113,113,0.12); color: #f87171; }
     .root { background: rgba(52,211,153,0.18); color: #34d399; font-weight: 700; }
 
+    .audio-row { display: flex; gap: 8px; margin-top: 10px; }
+    .btn-audio {
+      flex: 1; padding: 12px; border-radius: 10px;
+      border: 1.5px solid var(--accent-border);
+      background: var(--accent-dim); color: var(--accent);
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-audio:active { opacity: 0.6; }
+
     .btn-send {
       width: 100%; padding: 18px; border-radius: 14px; border: none;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
@@ -202,9 +212,12 @@ async function fetchKr(word) {
 }
 
 function parseEn(enData) {
-  let pronunciation = "", pos = "", meaningEn = "", exampleEn = "", synonyms = [], antonyms = [];
-  if (!enData) return { pronunciation, pos, meaningEn, exampleEn, synonyms, antonyms };
-  for (const ph of enData.phonetics ?? []) { if (ph.text) { pronunciation = ph.text; break; } }
+  let pronunciation = "", pos = "", meaningEn = "", exampleEn = "", audioUrl = "", synonyms = [], antonyms = [];
+  if (!enData) return { pronunciation, pos, meaningEn, exampleEn, audioUrl, synonyms, antonyms };
+  for (const ph of enData.phonetics ?? []) {
+    if (!audioUrl && ph.audio) audioUrl = ph.audio;
+    if (!pronunciation && ph.text) pronunciation = ph.text;
+  }
   for (const m of enData.meanings ?? []) {
     if (!pos) pos = POS_MAP[m.partOfSpeech] ?? m.partOfSpeech;
     for (const d of m.definitions ?? []) {
@@ -218,7 +231,7 @@ function parseEn(enData) {
   }
   synonyms = [...new Set(synonyms)].slice(0, 4);
   antonyms = [...new Set(antonyms)].slice(0, 4);
-  return { pronunciation, pos, meaningEn, exampleEn, synonyms, antonyms };
+  return { pronunciation, pos, meaningEn, exampleEn, audioUrl, synonyms, antonyms };
 }
 
 function buildMd(word, parsed, krMeaning, rootName, prefixName, prefixMeaning) {
@@ -269,8 +282,31 @@ ${related.join("\n")}
 `;
 }
 
-let currentWord = "";
-let currentMd   = "";
+let currentWord    = "";
+let currentMd      = "";
+let currentAudio   = "";
+let currentExample = "";
+
+// ── 음성 읽기 (원어민 오디오 → 없으면 기기 TTS) ──
+function speak(text, rate) {
+  if (!("speechSynthesis" in window)) { alert("이 기기는 음성 읽기를 지원하지 않아요."); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-US";
+  u.rate = rate;
+  speechSynthesis.speak(u);
+}
+function playWord(rate) {
+  if (!currentWord) return;
+  if (rate === 1.0 && currentAudio) {
+    new Audio(currentAudio).play().catch(() => speak(currentWord, rate));
+  } else {
+    speak(currentWord, rate);
+  }
+}
+function playExample(rate) {
+  if (currentExample) speak(currentExample, rate);
+}
 
 document.getElementById("wordInput").addEventListener("keydown", e => {
   if (e.key === "Enter") generate();
@@ -296,10 +332,12 @@ async function generate() {
   const rootName = detectRoot(word);
   const [prefixName, prefixMeaning] = detectPrefix(word);
 
-  currentWord = word;
-  currentMd   = buildMd(word, parsed, krMeaning, rootName, prefixName, prefixMeaning);
+  currentWord    = word;
+  currentMd      = buildMd(word, parsed, krMeaning, rootName, prefixName, prefixMeaning);
+  currentAudio   = parsed.audioUrl;
+  currentExample = parsed.exampleEn;
 
-  const { pronunciation, pos, meaningEn, synonyms, antonyms } = parsed;
+  const { pronunciation, pos, meaningEn, exampleEn, synonyms, antonyms } = parsed;
   const rootInfo = ROOTS[rootName] ?? {};
 
   document.getElementById("infoGrid").innerHTML = `
@@ -308,6 +346,10 @@ async function generate() {
       <div class="val" style="font-size:24px;font-weight:800;color:var(--accent)">
         ${word}
         <span style="font-size:14px;color:#4a7a5a;font-weight:400;margin-left:6px">${pronunciation}</span>
+      </div>
+      <div class="audio-row">
+        <button class="btn-audio" onclick="playWord(1.0)">🔊 발음 듣기</button>
+        <button class="btn-audio" onclick="playWord(0.6)">🐢 천천히</button>
       </div>
     </div>
     <div class="info-item">
@@ -322,6 +364,15 @@ async function generate() {
     <div class="info-item full">
       <div class="key">영어 뜻</div>
       <div class="val" style="font-size:13px;color:#8ab89e">${meaningEn}</div>
+    </div>` : ""}
+    ${exampleEn ? `
+    <div class="info-item full">
+      <div class="key">예문</div>
+      <div class="val" style="font-size:14px;line-height:1.6">${exampleEn}</div>
+      <div class="audio-row">
+        <button class="btn-audio" onclick="playExample(1.0)">🔊 예문 듣기</button>
+        <button class="btn-audio" onclick="playExample(0.6)">🐢 천천히</button>
+      </div>
     </div>` : ""}
     ${rootName ? `
     <div class="info-item full">
