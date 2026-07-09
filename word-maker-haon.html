@@ -100,6 +100,16 @@
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .btn-send:active { opacity: 0.8; }
+    a.btn-send { text-decoration: none; box-sizing: border-box; }
+
+    .btn-copy {
+      width: 100%; padding: 14px; border-radius: 12px;
+      border: 1.5px solid var(--accent-border);
+      background: transparent; color: var(--accent);
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      margin-top: 10px; transition: opacity 0.2s;
+    }
+    .btn-copy:active { opacity: 0.6; }
 
     .how-to {
       background: var(--accent-dim); border: 1px solid var(--accent-border);
@@ -133,9 +143,10 @@
     </div>
 
     <div class="card">
-      <button class="btn-send" onclick="sendToObsidian()">
+      <a class="btn-send" id="obsidianLink" href="#" onclick="return sendToObsidian();">
         📒 옵시디언으로 전달
-      </button>
+      </a>
+      <button class="btn-copy" onclick="copyMd()">📋 대신 복사하기</button>
       <div style="text-align:center;font-size:12px;color:#4a7a5a;margin-top:10px">
         마지막으로 열었던 볼트의 02_단어 폴더에 생성됩니다<br>
         먼저 옵시디언에서 하온_영어볼트를 한 번 열어두세요
@@ -143,9 +154,12 @@
     </div>
 
     <div class="how-to">
-      <b>전달이 안 될 경우</b><br>
-      설정 → Obsidian → 허용 확인 후 다시 탭해보세요.<br>
-      또는 옵시디언을 먼저 열어두고 탭하세요.
+      <b>전달이 안 될 경우 (아이패드에서 자주 발생)</b><br>
+      1. 옵시디언 앱이 설치되어 있는지 확인하세요.<br>
+      2. Files 앱에서 이 페이지를 열었다면, 파일을 <b>길게 눌러 "Safari에서 열기"</b>로 열어보세요.
+      (그냥 탭하면 미리보기 모드로 열려 앱 전환이 막힐 수 있어요.)<br>
+      3. 그래도 안 되면 <b>"대신 복사하기"</b> 버튼으로 복사한 뒤,
+      옵시디언에서 새 노트를 만들어 붙여넣으세요.
     </div>
 
   </div>
@@ -289,13 +303,39 @@ let currentAudio   = "";
 let currentExample = "";
 
 // ── 음성 읽기 (원어민 오디오 → 없으면 기기 TTS) ──
+// iOS는 음성 목록이 비동기로 늦게 로드되므로 미리 준비해둔다
+let voicesReady = [];
+function loadVoices() { voicesReady = speechSynthesis.getVoices(); }
+if ("speechSynthesis" in window) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+// 로봇 같은 기본 목소리 대신 고품질 영어 음성을 우선 선택
+const PREFERRED_VOICE_NAMES = ["Samantha", "Ava", "Allison", "Susan", "Nicky", "Zoe", "Google US English"];
+function pickVoice() {
+  if (!voicesReady.length) voicesReady = speechSynthesis.getVoices();
+  for (const name of PREFERRED_VOICE_NAMES) {
+    const v = voicesReady.find(v => v.name.includes(name));
+    if (v) return v;
+  }
+  return voicesReady.find(v => v.lang === "en-US") || voicesReady.find(v => v.lang?.startsWith("en")) || null;
+}
+
 function speak(text, rate) {
   if (!("speechSynthesis" in window)) { alert("이 기기는 음성 읽기를 지원하지 않아요."); return; }
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = "en-US";
-  u.rate = rate;
-  speechSynthesis.speak(u);
+  // iOS는 cancel 직후 바로 speak하면 소리가 안 나는 경우가 있어 약간의 지연을 둔다
+  setTimeout(() => {
+    const u = new SpeechSynthesisUtterance(text);
+    const voice = pickVoice();
+    if (voice) u.voice = voice;
+    u.lang = "en-US";
+    u.rate = rate;
+    u.pitch = 1;
+    u.volume = 1;
+    speechSynthesis.speak(u);
+  }, 60);
 }
 function playWord(rate) {
   if (!currentWord) return;
@@ -350,7 +390,7 @@ async function generate() {
       </div>
       <div class="audio-row">
         <button class="btn-audio" onclick="playWord(1.0)">🔊 발음 듣기</button>
-        <button class="btn-audio" onclick="playWord(0.6)">🐢 천천히</button>
+        <button class="btn-audio" onclick="playWord(0.75)">🐢 천천히</button>
       </div>
     </div>
     <div class="info-item">
@@ -372,7 +412,7 @@ async function generate() {
       <div class="val" style="font-size:14px;line-height:1.6">${exampleEn}</div>
       <div class="audio-row">
         <button class="btn-audio" onclick="playExample(1.0)">🔊 예문 듣기</button>
-        <button class="btn-audio" onclick="playExample(0.6)">🐢 천천히</button>
+        <button class="btn-audio" onclick="playExample(0.75)">🐢 천천히</button>
       </div>
     </div>` : ""}
     ${rootName ? `
@@ -403,6 +443,11 @@ async function generate() {
     </div>` : ""}
   `;
 
+  // vault 이름을 지정하면 한글 이름 매칭에 실패할 수 있어
+  // 마지막으로 열었던 볼트의 02_단어 폴더로 보낸다
+  const obsidianUrl = `obsidian://new?name=${encodeURIComponent("02_단어/" + currentWord)}&content=${encodeURIComponent(currentMd)}`;
+  document.getElementById("obsidianLink").href = obsidianUrl;
+
   document.getElementById("result").classList.add("visible");
   const extras = [rootName && `어원 [[${rootName}]]`, prefixName && `접두사 ${prefixName}`].filter(Boolean);
   setStatus(`✅ ${word} 노트 준비 완료${extras.length ? " | " + extras.join(", ") : ""}`, "done");
@@ -410,12 +455,28 @@ async function generate() {
   document.getElementById("result").scrollIntoView({ behavior: "smooth" });
 }
 
+// 실제 <a href> 태그를 통한 이동이 Quick Look 등 제한된 환경에서
+// window.location.href 대입보다 더 안정적으로 동작한다
 function sendToObsidian() {
+  return !!currentMd; // href가 비어있지 않으면 기본 앵커 이동을 허용
+}
+
+async function copyMd() {
   if (!currentMd) return;
-  // vault 이름을 지정하면 한글 이름 매칭에 실패할 수 있어
-  // 마지막으로 열었던 볼트의 02_단어 폴더로 보낸다
-  const url = `obsidian://new?name=${encodeURIComponent("02_단어/" + currentWord)}&content=${encodeURIComponent(currentMd)}`;
-  window.location.href = url;
+  const btn = document.querySelector(".btn-copy");
+  try {
+    await navigator.clipboard.writeText(currentMd);
+  } catch {
+    const ta = document.createElement("textarea");
+    ta.value = currentMd;
+    ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+  }
+  btn.textContent = "✅ 복사됨! 옵시디언에 붙여넣으세요";
+  setTimeout(() => { btn.textContent = "📋 대신 복사하기"; }, 2500);
 }
 </script>
 </body>
