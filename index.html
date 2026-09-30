@@ -729,6 +729,7 @@
       .footer-bottom { flex-direction: column; gap: 8px; }
       .team-org { flex-direction: column; gap: 12px; }
       .team-grid { grid-template-columns: 1fr 1fr; }
+      .campus-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 480px) {
       .guide-grid { grid-template-columns: 1fr; }
@@ -821,6 +822,49 @@
       font-size: 11.5px;
       color: var(--text-mid);
       opacity: .6;
+    }
+
+    /* ── 캠퍼스 배치 현황 ─────────────────────────────── */
+    .campus-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .campus-card {
+      background: white;
+      border: 1px solid var(--cream-dark);
+      border-radius: 14px;
+      padding: 22px 24px;
+    }
+    .campus-card.now  { border: 1.5px solid var(--green-light); }
+    .campus-card.soon { border: 1.5px solid var(--gold); }
+    .campus-status {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      padding: 4px 11px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      background: var(--cream-dark);
+      color: var(--text-mid);
+    }
+    .campus-card.now  .campus-status { background: var(--green-deep); color: var(--cream); }
+    .campus-card.soon .campus-status { background: var(--gold); color: var(--green-deep); }
+    .campus-name { font-size: 16px; font-weight: 700; color: var(--green-deep); margin-bottom: 7px; }
+    .campus-desc { font-size: 12.5px; color: var(--text-mid); line-height: 1.65; word-break: keep-all; }
+    .team-sub-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--green-deep);
+      margin-bottom: 6px;
+    }
+    .team-sub-desc {
+      font-size: 12.5px;
+      color: var(--text-mid);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      word-break: keep-all;
     }
     /* ── 스크롤 페이드인 애니메이션 ─────────────────── */
     .reveal {
@@ -1281,11 +1325,11 @@
     <div class="board-list" id="boardList">
 
       <!-- 공지 -->
-      <div class="board-item" data-cat="공지">
+      <div class="board-item" data-cat="공지" onclick="openNotice()">
         <div class="board-item-left">
           <div class="board-item-tag">공지</div>
-          <div class="board-item-title">2026년 정품사역 상반기 일정 및 상담 신청 안내</div>
-          <div class="board-item-meta">2026.06.20</div>
+          <div class="board-item-title">2026년 정품사역 하반기 일정 및 상담 신청 안내</div>
+          <div class="board-item-meta">2026.09.01 · 클릭하면 상세 내용을 볼 수 있습니다</div>
         </div>
         <div class="board-item-arrow">›</div>
       </div>
@@ -1386,7 +1430,99 @@
   </div>
 </section>
 
+<!-- ── 하반기 공지 모달 ─────────────────────────────── -->
+<div id="noticeModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:2000; overflow-y:auto; padding:40px 20px;">
+  <div style="background:#fff; max-width:720px; margin:0 auto; border-radius:20px; overflow:hidden; box-shadow:0 24px 80px rgba(0,0,0,.2);">
+    <div style="background:var(--green-deep); padding:28px 32px; display:flex; justify-content:space-between; align-items:flex-start; gap:16px;">
+      <div>
+        <div style="font-size:10.5px; letter-spacing:.12em; color:var(--gold); font-weight:700; margin-bottom:7px;">공지사항 · 2026.09.01</div>
+        <h2 style="color:var(--cream); font-size:19px; font-weight:700; line-height:1.4;">2026년 정품사역 하반기 일정 및<br>상담 신청 안내</h2>
+      </div>
+      <button onclick="closeNotice()" style="background:rgba(255,255,255,.12); border:none; color:var(--cream); width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; flex-shrink:0; line-height:1;">✕</button>
+    </div>
+
+    <div style="padding:32px; line-height:1.9; color:var(--text-dark); font-size:14px; word-break:keep-all;">
+
+      <p style="margin-bottom:28px;">하나님의 평강이 공동체를 섬기시는 모든 분들과 함께 하기를 기도합니다.<br>
+      2026년 하반기 정품사역 운영 계획과 상담 신청 절차를 안내드립니다.</p>
+
+      <h3 style="font-size:16px; font-weight:700; color:var(--green-deep); margin-bottom:12px;">1. 하반기 운영 방향 — 캠퍼스 확대</h3>
+      <p style="margin-bottom:14px;">그동안 정품사역은 <strong>서빙고 캠퍼스</strong>를 중심으로 20개 공동체에서 진행되어 왔습니다. 하반기부터는 <strong>양재 캠퍼스</strong>에 공동체별 정품사역자를 세우고, 이어서 <strong>온누리교회 국내 캠퍼스</strong>로 순차 확대해 갑니다.</p>
+      <ul style="list-style:none; padding:0; margin-bottom:14px; display:flex; flex-direction:column; gap:9px;">
+        <li style="display:flex; gap:10px;"><span style="color:var(--green-light); flex-shrink:0;">●</span><span><strong>서빙고 캠퍼스</strong> — 기존 사역 지속. 공동체별 정품사역자 중심의 돌봄과 사례 자문을 이어갑니다.</span></li>
+        <li style="display:flex; gap:10px;"><span style="color:var(--gold); flex-shrink:0;">●</span><span><strong>양재 캠퍼스</strong> — 하반기 중 공동체별 정품사역자를 선발하고 기본 교육을 진행합니다.</span></li>
+        <li style="display:flex; gap:10px;"><span style="color:var(--text-mid); flex-shrink:0;">●</span><span><strong>국내 캠퍼스</strong> — 양재 캠퍼스 정착 이후 각 캠퍼스 상황에 맞추어 순차적으로 세워갑니다.</span></li>
+      </ul>
+      <p style="font-size:13px; color:var(--text-mid); background:var(--cream); padding:14px 18px; border-radius:8px; border-left:3px solid var(--gold); margin-bottom:32px;">
+        정품사역자로 섬기기를 원하시거나 공동체에 추천할 분이 있으시면 담당 교역자 또는 정품사역팀으로 문의해 주십시오.
+      </p>
+
+      <h3 style="font-size:16px; font-weight:700; color:var(--green-deep); margin-bottom:12px;">2. 하반기 회복사역 프로그램 일정</h3>
+      <table style="width:100%; border-collapse:collapse; margin-bottom:32px; font-size:13px;">
+        <thead><tr style="background:var(--green-deep); color:var(--cream);">
+          <th style="padding:10px 14px; text-align:left;">프로그램</th>
+          <th style="padding:10px 14px; text-align:left;">일정</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--cream-dark);"><td style="padding:9px 14px; font-weight:600;">회복소그룹</td><td style="padding:9px 14px;">9월 개강 · 8주 · 매주 금 20:40 · 서빙고</td></tr>
+          <tr style="border-bottom:1px solid var(--cream-dark);"><td style="padding:9px 14px; font-weight:600;">하트스쿨 (초등 1–6학년)</td><td style="padding:9px 14px;">9월 개강 · 8주 · 매주 토 14:30</td></tr>
+          <tr style="border-bottom:1px solid var(--cream-dark);"><td style="padding:9px 14px; font-weight:600;">프리덤스쿨</td><td style="padding:9px 14px;">10월 개강 · 10주 · 매주 토 16:00 · 양재 도곡교육관</td></tr>
+          <tr style="border-bottom:1px solid var(--cream-dark);"><td style="padding:9px 14px; font-weight:600;">정서적으로 건강한 영성훈련 (EHS)</td><td style="padding:9px 14px;">10월 개강 · 8주 · 서빙고 · 양재 도곡교육관</td></tr>
+          <tr style="border-bottom:1px solid var(--cream-dark);"><td style="padding:9px 14px; font-weight:600;">파워임팩트 (중1–고3 · 부모)</td><td style="padding:9px 14px;">10월 · 매주 토 20:00 · 양재 도곡교육관</td></tr>
+          <tr style="border-bottom:1px solid var(--cream-dark);"><td style="padding:9px 14px; font-weight:600;">치유와 기름부음 스쿨</td><td style="padding:9px 14px;">10월 · 서빙고 콘서트홀 + ZOOM</td></tr>
+          <tr style="border-bottom:1px solid var(--cream-dark);"><td style="padding:9px 14px; font-weight:600;">관계기술훈련 (트랙 1–3)</td><td style="padding:9px 14px;">하반기 8주 과정</td></tr>
+          <tr><td style="padding:9px 14px; font-weight:600;">내적치유학교</td><td style="padding:9px 14px;">12월 · 2박 3일</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size:16px; font-weight:700; color:var(--green-deep); margin-bottom:12px;">3. 상담 신청 안내</h3>
+      <p style="margin-bottom:14px;">상담 신청서는 <strong>순장이 작성</strong>합니다. 성도 본인이 직접 신청하기 어려운 경우가 많기 때문에, 가장 가까이에서 상황을 살피는 순장이 신청 주체가 됩니다.</p>
+      <ol style="padding-left:20px; margin-bottom:14px;">
+        <li style="margin-bottom:8px;"><strong>신청서 작성</strong> — 상담신청 섹션의 신청서 링크를 통해 작성합니다.</li>
+        <li style="margin-bottom:8px;"><strong>담당자 검토</strong> — 정품사역팀이 내용을 확인하고 담당 사역자를 배정합니다.</li>
+        <li style="margin-bottom:8px;"><strong>연락 및 연결</strong> — 48시간 이내에 담당자가 연락드립니다.</li>
+        <li style="margin-bottom:8px;"><strong>동행 시작</strong> — 상황에 맞는 자원과 연결되어 함께 걸어갑니다.</li>
+      </ol>
+      <p style="font-size:13px; color:var(--text-mid); margin-bottom:24px;">작성하신 모든 내용은 비공개·비판단·비해석 원칙 아래 정품사역팀 내부에서만 열람됩니다.</p>
+
+      <div style="text-align:center; margin-bottom:28px;">
+        <button onclick="closeNotice(); document.getElementById('apply').scrollIntoView({behavior:'smooth'});"
+          style="background:var(--gold); color:var(--green-deep); border:none; border-radius:30px; padding:14px 36px; font-size:14px; font-weight:700; cursor:pointer;">
+          상담 신청 바로가기 →
+        </button>
+      </div>
+
+      <div style="background:#FFF8EC; border:1.5px solid var(--gold); border-radius:10px; padding:18px 20px;">
+        <h4 style="font-size:13px; font-weight:700; color:var(--green-deep); margin-bottom:10px;">🚨 즉각적인 위기 상황이라면</h4>
+        <p style="font-size:13px; color:var(--text-mid); line-height:1.7;">
+          신청서 접수를 기다리지 마시고 즉시 담당 정품사역자 또는 팀장에게 연락하시고,
+          <strong>자살예방상담전화 1393</strong> 또는 <strong>정신건강위기상담 1577-0199</strong>(24시간)로 도움을 요청하십시오.
+        </p>
+      </div>
+
+      <p style="font-size:11.5px; color:#aaa; margin-top:24px; padding-top:16px; border-top:1px solid var(--cream-dark);">
+        문의 · 온누리교회 회복사역본부 정품사역팀
+      </p>
+    </div>
+  </div>
+</div>
+
 <script>
+function openNotice() {
+  document.getElementById('noticeModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+function closeNotice() {
+  document.getElementById('noticeModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+document.getElementById('noticeModal').addEventListener('click', function(e) {
+  if (e.target === this) closeNotice();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeNotice();
+});
+
 function toggleMenu() {
   document.getElementById('navLinks').classList.toggle('open');
 }
@@ -1843,7 +1979,7 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
     <!-- 조직 -->
     <div class="team-org">
       <div class="org-card">
-        <div class="org-role">정품사역본부</div>
+        <div class="org-role">정품사역</div>
         <div class="org-name">김성욱 목사</div>
       </div>
       <div class="org-arrow">›</div>
@@ -1858,14 +1994,42 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
       </div>
     </div>
 
+    <!-- 캠퍼스별 배치 현황 -->
+    <div style="margin-bottom:48px;">
+      <h3 class="team-sub-title">캠퍼스별 정품사역자 배치</h3>
+      <p class="team-sub-desc">
+        정품사역은 서빙고 캠퍼스에서 먼저 시작되었습니다.
+        2026년 하반기부터 양재 캠퍼스에 정품사역자를 세우고, 이어서 온누리교회 국내 캠퍼스로 순차 확대해 갑니다.
+      </p>
+      <div class="campus-grid">
+        <div class="campus-card now">
+          <span class="campus-status">운영 중</span>
+          <div class="campus-name">서빙고 캠퍼스</div>
+          <div class="campus-desc">21개 공동체에 정품사역자가 배치되어, 순장·공동체 리더십과 함께 돌봄을 감당하고 있습니다.</div>
+        </div>
+        <div class="campus-card soon">
+          <span class="campus-status">2026 하반기 시작</span>
+          <div class="campus-name">양재 캠퍼스</div>
+          <div class="campus-desc">공동체별 정품사역자를 세우고, 교육과 사례 자문 체계를 함께 준비하고 있습니다.</div>
+        </div>
+        <div class="campus-card">
+          <span class="campus-status">순차 확대</span>
+          <div class="campus-name">국내 캠퍼스</div>
+          <div class="campus-desc">온누리교회 국내 각 캠퍼스에도 정품사역자를 세워, 어느 공동체에 속해 있든 같은 돌봄을 받을 수 있도록 준비합니다.</div>
+        </div>
+      </div>
+    </div>
+
     <!-- 공동체별 사역자 -->
+    <h3 class="team-sub-title">서빙고 캠퍼스 공동체별 정품사역자</h3>
+    <p class="team-sub-desc">양재 캠퍼스와 국내 캠퍼스 사역자는 세움이 완료되는 대로 순차적으로 안내드립니다.</p>
     <div class="team-grid">
       <div class="community-card"><h4>강촌공동체</h4><ul><li>장미경</li><li>박미룡</li><li>선우미숙</li></ul></div>
-      <div class="community-card"><h4>여의도공동체</h4><ul><li>정제영</li></ul></div>
+      <div class="community-card"><h4>여의도공동체</h4><ul><li>정용모</li><li>정제영</li></ul></div>
       <div class="community-card"><h4>성북공동체</h4><ul><li>이순자</li></ul></div>
-      <div class="community-card"><h4>동대문중랑공동체</h4><ul><li>강수미</li></ul></div>
+      <div class="community-card"><h4>동대문중랑공동체</h4><ul><li>김기범</li><li>강수미</li></ul></div>
       <div class="community-card"><h4>가정사역공동체</h4><ul><li>김성환</li><li>김명희</li></ul></div>
-      <div class="community-card"><h4>관악금천공동체</h4><ul><li>이석구</li><li>박정순</li></ul></div>
+      <div class="community-card"><h4>관악금천공동체</h4><ul><li>이석구</li><li>박정순</li><li>김의선</li></ul></div>
       <div class="community-card"><h4>노원공동체</h4><ul><li>김순태</li><li>최현주</li></ul></div>
       <div class="community-card"><h4>서대문공동체</h4><ul><li>김현기</li><li>유용선</li></ul></div>
       <div class="community-card"><h4>이촌공동체</h4><ul><li>박영우</li><li>김부화</li></ul></div>
@@ -1880,6 +2044,7 @@ document.getElementById('aboutModal').addEventListener('click', function(e) {
       <div class="community-card"><h4>영등포구로공동체</h4><ul><li>서은영</li><li>신태수</li><li>이종미</li></ul></div>
       <div class="community-card"><h4>성동광진공동체</h4><ul><li>손형배</li><li>임영주</li></ul></div>
       <div class="community-card"><h4>일산파주공동체</h4><ul><li>이신창</li><li>이화영</li></ul></div>
+      <div class="community-card"><h4>양천공동체</h4><ul><li>김종석</li><li>김은정</li></ul></div>
     </div>
 
     <p class="team-privacy">* 사역자 동의 전까지 공동체명·이름만 표시합니다. 연락처는 별도 문의 바랍니다.</p>
